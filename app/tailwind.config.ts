@@ -1,4 +1,5 @@
 const svgToDataUri = require("mini-svg-data-uri");
+const colors = require("tailwindcss/colors");
 const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
@@ -13,7 +14,22 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      
+        "animation": {
+          shimmer: "shimmer 2s linear infinite"
+        },
+        "keyframes": {
+          shimmer: {
+            from: {
+              "backgroundPosition": "0 0"
+            },
+            to: {
+              "backgroundPosition": "-200% 0"
+            }
+          }
+        }
+    },
   },
   plugins: [
     addVariablesForColors,
@@ -23,6 +39,11 @@ module.exports = {
           "bg-dot-thick": (value: any) => ({
             backgroundImage: `url("${svgToDataUri(
               `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="2.5"></circle></svg>`
+            )}")`,
+          }),
+          "bg-dot": (value: any) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="1.6257413380501518"></circle></svg>`
             )}")`,
           }),
         },
