@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./AggregatorV3Interface.sol";
 
-contract CallBasketOption {
+contract PutBasketOption {
     struct Asset {
         address assetAddress;
         uint256 quantity;
@@ -76,12 +76,7 @@ contract CallBasketOption {
 
     function init() external onlyCreator {
         require(inited == false, "Option contract has already been initialized");
-        for (uint256 i = 0; i < assets.length; i++) {
-            require(
-                IERC20(assets[i].assetAddress).transferFrom(creator, address(this), assets[i].quantity),
-                "Transfer failed"
-            );
-        }
+        require(premiumToken.transferFrom(creator, address(this), strikeValue), "Transfer failed");
         inited = true;
     }
 
@@ -100,10 +95,10 @@ contract CallBasketOption {
         require(block.timestamp <= expiration, "Option expired");
         require(_checkPosition(), "Option is out of the money");
 
+        require(premiumToken.transfer(buyer, strikeValue), "Asset transfer failed");
         for (uint256 i = 0; i < assets.length; i++) {
-            require(IERC20(assets[i].assetAddress).transfer(buyer, assets[i].quantity), "Asset transfer failed");
+            require(IERC20(assets[i].assetAddress).transferFrom(buyer, creator, assets[i].quantity), "Payment failed");
         }
-        require(premiumToken.transferFrom(buyer, creator, strikeValue), "Payment failed");
 
         executed = true;
     }
@@ -113,7 +108,7 @@ contract CallBasketOption {
         for (uint256 i = 0; i < assets.length; i++) {
             currentValue += _getAssetValue(assets[i].assetAddress, assets[i].quantity);
         }
-        return currentValue >= strikeValue;
+        return currentValue <= strikeValue;
     }
 
     function _getAssetValue(address asset, uint256 quantity) internal view returns (uint256) {
