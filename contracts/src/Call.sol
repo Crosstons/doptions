@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {AggregatorV3Interface} from "./AggregatorV3Interface.sol";
 
 contract CallOption {
     address public asset;
@@ -15,6 +16,7 @@ contract CallOption {
     bool public bought;
     bool public executed;
     IERC20 public premiumToken;
+    AggregatorV3Interface public priceOracle;
 
     constructor(
         address _asset,
@@ -22,7 +24,8 @@ contract CallOption {
         uint256 _strikePrice,
         uint256 _quantity,
         uint256 _expiration,
-        address _premiumToken
+        address _premiumToken,
+        address _priceOracle
     ) {
         asset = _asset;
         creator = msg.sender;
@@ -35,6 +38,7 @@ contract CallOption {
         executed = false;
         inited = false;
         premiumToken = IERC20(_premiumToken);
+        priceOracle = AggregatorV3Interface(_priceOracle);
     }
 
     modifier isInited() {
@@ -89,10 +93,9 @@ contract CallOption {
         executed = true;
     }
 
-    function _checkPosition() internal pure returns (bool) {
-        // call the Chainlink price feed for the asset
-        // return uint256(price) >= strikePrice;
-        return false;
+    function _checkPosition() internal view returns (bool) {
+        (, int256 price,,,) = priceOracle.latestRoundData();
+        return uint256(price) >= strikePrice;
     }
 
     function cancel() external onlyCreator notBought isInited {
