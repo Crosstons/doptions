@@ -1,44 +1,55 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {AggregatorV3Interface} from "./AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./AggregatorV3Interface.sol";
 
-contract PutOption {
-    address public asset;
+contract CallBasketOption {
+    struct Asset {
+        address assetAddress;
+        uint256 quantity;
+    }
+
+    Asset[] public assets;
     address public creator;
     uint256 public premium;
-    uint256 public strikePrice;
-    uint256 public quantity;
+    uint256 public strikeValue;
     uint256 public expiration;
     address public buyer;
     bool public inited;
     bool public bought;
     bool public executed;
     IERC20 public premiumToken;
-    AggregatorV3Interface public priceOracle;
+    mapping(address => address) public priceOracles;
 
     constructor(
-        address _asset,
+        address[] memory _assets,
+        address[] memory _priceOracles,
+        uint256[] memory _quantities,
         uint256 _premium,
-        uint256 _strikePrice,
-        uint256 _quantity,
+        uint256 _strikeValue,
         uint256 _expiration,
-        address _premiumToken,
-        address _priceOracle
+        address _premiumToken
     ) {
-        asset = _asset;
+        require(_assets.length == _quantities.length, "Assets and quantities length mismatch");
+        require(_assets.length == _priceOracles.length, "Assets and price oracles length mismatch");
+
         creator = msg.sender;
         premium = _premium;
-        strikePrice = _strikePrice;
-        quantity = _quantity;
+        strikeValue = _strikeValue;
         expiration = _expiration;
         buyer = address(0);
         bought = false;
         executed = false;
-        inited = false;
         premiumToken = IERC20(_premiumToken);
-        priceOracle = AggregatorV3Interface(_priceOracle);
+
+        for (uint256 i = 0; i < _assets.length; i++) {
+            assets.push(Asset({
+                assetAddress: _assets[i],
+                quantity: _quantities[i]
+            }));
+            priceOracles[_assets[i]] = _priceOracles[i];
+        }
     }
 
     modifier isInited() {
@@ -68,7 +79,9 @@ contract PutOption {
 
     function init() external onlyCreator {
         require(inited == false, "Option contract has already been initialized");
-        require(premiumToken.transferFrom(creator, address(this), strikeValue()), "Transfer failed");
+        for (uint256 i = 0; i < assets.length; i++) {
+            require(IERC20(assets[i].assetAddress).transferFrom(creator, address(this), assets[i].quantity), "Transfer failed");
+        }
         inited = true;
     }
 
@@ -87,20 +100,32 @@ contract PutOption {
         require(block.timestamp <= expiration, "Option expired");
         require(_checkPosition(), "Option is out of the money");
 
-        uint256 amountToTransfer = strikeValue();
-        require(premiumToken.transfer(buyer, amountToTransfer), "Asset transfer failed");
-        require(IERC20(asset).transferFrom(buyer, creator, quantity), "Payment failed");
+        for (uint256 i = 0; i < assets.length; i++) {
+            require(IERC20(assets[i].assetAddress).transfer(buyer, assets[i].quantity), "Asset transfer failed");
+        }
+        require(premiumToken.transferFrom(buyer, creator, strikeValue), "Payment failed");
 
         executed = true;
     }
 
     function _checkPosition() internal view returns (bool) {
-        (, int256 price,,,) = priceOracle.latestRoundData();
-        return uint256(price) <= strikePrice;
+        uint256 currentValue = 0;
+        for (uint256 i = 0; i < assets.length; i++) {
+            currentValue += _getAssetValue(assets[i].assetAddress, assets[i].quantity);
+        }
+        return currentValue >= strikeValue;
+    }
+
+    function _getAssetValue(address asset, uint256 quantity) internal view returns (uint256) {
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(priceOracles[asset]);
+        (, int256 price, , ,) = priceFeed.latestRoundData();
+        return uint256(price) * quantity;
     }
 
     function cancel() external onlyCreator notBought isInited {
-        require(IERC20(asset).transfer(creator, quantity), "Asset transfer failed");
+        for (uint256 i = 0; i < assets.length; i++) {
+            require(IERC20(assets[i].assetAddress).transfer(creator, assets[i].quantity), "Asset transfer failed");
+        }
         executed = true;
     }
 
@@ -108,15 +133,13 @@ contract PutOption {
         require(block.timestamp > expiration, "Option not expired yet");
         require(!executed, "Option already executed");
 
-        require(IERC20(asset).transfer(creator, quantity), "Asset transfer failed");
+        for (uint256 i = 0; i < assets.length; i++) {
+            require(IERC20(assets[i].assetAddress).transfer(creator, assets[i].quantity), "Asset transfer failed");
+        }
         executed = true;
     }
 
     function adjustPremium(uint256 newPremium) external onlyCreator notBought {
         premium = newPremium;
-    }
-
-    function strikeValue() public view returns (uint256) {
-        return strikePrice * quantity;
     }
 }
