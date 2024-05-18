@@ -3,11 +3,14 @@ pragma solidity ^0.8.13;
 
 import {CallOption} from "./Call.sol";
 import {PutOption} from "./Put.sol";
+import {CallBasketOption} from "./CallBasket.sol";
+import {PutBasketOption} from "./PutBasket.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract OptionsFactory is Ownable {
     address[] public callOptions;
     address[] public putOptions;
+    address[] public basketOptions;
     address public premiumToken;
     mapping(address => address) public priceOracles;
 
@@ -25,6 +28,24 @@ contract OptionsFactory is Ownable {
         uint256 premium,
         uint256 strikePrice,
         uint256 quantity,
+        uint256 expiration
+    );
+
+    event CallBasketOptionCreated(
+        address indexed optionAddress,
+        address[] indexed assets,
+        uint256 premium,
+        uint256 strikeValue,
+        uint256[] quantities,
+        uint256 expiration
+    );
+
+    event PutBasketOptionCreated(
+        address indexed optionAddress,
+        address[] indexed assets,
+        uint256 premium,
+        uint256 strikeValue,
+        uint256[] quantities,
         uint256 expiration
     );
 
@@ -68,6 +89,50 @@ contract OptionsFactory is Ownable {
         putOptions.push(address(_newPutOption));
 
         emit PutOptionCreated(address(_newPutOption), _asset, _premium, _strikePrice, _quantity, _expiration);
+    }
+
+    function createCallBasketOption(
+        address[] memory _assets,
+        address[] memory _priceOracles,
+        uint256[] memory _quantities,
+        uint256 _premium,
+        uint256 _strikeValue,
+        uint256 _expiration
+    ) external {
+        for (uint256 i = 0; i < _assets.length; i++) {
+            require(priceOracles[_assets[i]] != address(0), "Price oracle not set for one or more assets");
+            require(priceOracles[_assets[i]] == _priceOracles[i], "Invalid price oracle is being passed as input");
+        }
+
+        CallBasketOption _newBasketOption =
+            new CallBasketOption(_assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken);
+        basketOptions.push(address(_newBasketOption));
+
+        emit CallBasketOptionCreated(
+            address(_newBasketOption), _assets, _premium, _strikeValue, _quantities, _expiration
+        );
+    }
+
+    function createPutBasketOption(
+        address[] memory _assets,
+        address[] memory _priceOracles,
+        uint256[] memory _quantities,
+        uint256 _premium,
+        uint256 _strikeValue,
+        uint256 _expiration
+    ) external {
+        for (uint256 i = 0; i < _assets.length; i++) {
+            require(priceOracles[_assets[i]] != address(0), "Price oracle not set for one or more assets");
+            require(priceOracles[_assets[i]] == _priceOracles[i], "Invalid price oracle is being passed as input");
+        }
+
+        PutBasketOption _newBasketOption =
+            new PutBasketOption(_assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken);
+        basketOptions.push(address(_newBasketOption));
+
+        emit PutBasketOptionCreated(
+            address(_newBasketOption), _assets, _premium, _strikeValue, _quantities, _expiration
+        );
     }
 
     function getCallOptions() external view returns (address[] memory) {
