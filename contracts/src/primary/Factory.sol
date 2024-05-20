@@ -22,6 +22,7 @@ contract OptionsFactory is Ownable {
         uint256 quantity,
         uint256 expiration
     );
+
     event PutOptionCreated(
         address indexed optionAddress,
         address indexed asset,
@@ -141,5 +142,9 @@ contract OptionsFactory is Ownable {
 
     function getPutOptions() external view returns (address[] memory) {
         return putOptions;
+    }
+
+    function getBasketOptions() external view returns (address[] memory) {
+        return basketOptions;
     }
 }
