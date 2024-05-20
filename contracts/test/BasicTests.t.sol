@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import "../src/primary/Factory.sol";
 import "../src/primary/Call.sol";
 import "../src/primary/Put.sol";
@@ -10,20 +10,16 @@ import "../src/primary/AggregatorV3Interface.sol";
 
 contract OptionsFactoryTest is Test {
     OptionsFactory public factory;
-    ERC20 public premiumToken;
-    ERC20 public assetToken;
-    address public priceOracle;
+    address premiumToken = 0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582;
+    address assetToken = 0x45bafad5a6a531Bc18Cf6CE5B02C58eA4D20589b;
+    address priceOracle = 0xe7656e23fE8077D438aEfbec2fAbDf2D8e070C4f;
 
-    address public creator = address(1);
-    address public buyer = address(2);
+    address public creator = makeAddr("creator");
+    address buyer = makeAddr("buyer");
 
     function setUp() public {
-        premiumToken = ERC20(makeAddr("usdt"));
-        assetToken = ERC20(makeAddr("btc"));
-        priceOracle = 0xe7656e23fE8077D438aEfbec2fAbDf2D8e070C4f;
-
-        factory = new OptionsFactory(address(premiumToken));
-        factory.setPriceOracle(address(assetToken), address(priceOracle));
+        factory = new OptionsFactory(premiumToken);
+        factory.setPriceOracle(assetToken, priceOracle);
     }
 
     function testCreateCallOption() public {
@@ -31,6 +27,8 @@ contract OptionsFactoryTest is Test {
         uint256 strikePrice = 1500 * 10 ** 18;
         uint256 quantity = 1 * 10 ** 18;
         uint256 expiration = block.timestamp + 1 weeks;
+
+        deal(address(assetToken), creator, 100e18);
 
         vm.prank(creator);
         factory.createCallOption(address(assetToken), premium, strikePrice, quantity, expiration);

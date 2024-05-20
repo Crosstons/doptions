@@ -66,25 +66,29 @@ contract CallOption {
         _;
     }
 
+    modifier notExpired() {
+        require(block.timestamp <= expiration, "Option expired");
+        _;
+    }
+
     function init() external onlyCreator {
         require(inited == false, "Option contract has already been initialized");
         require(IERC20(asset).transferFrom(creator, address(this), quantity), "Transfer failed");
         inited = true;
     }
 
-    function buy() external notBought isInited {
+    function buy() external notBought isInited notExpired {
         require(msg.sender != creator, "Creator cannot buy their own option");
         require(premiumToken.transferFrom(msg.sender, creator, premium), "Premium transfer failed");
         buyer = msg.sender;
         bought = true;
     }
 
-    function transfer(address newBuyer) external onlyBuyer isInited {
+    function transfer(address newBuyer) external onlyBuyer isInited notExpired {
         buyer = newBuyer;
     }
 
-    function execute() external onlyBuyer notExecuted isInited {
-        require(block.timestamp <= expiration, "Option expired");
+    function execute() external onlyBuyer notExecuted isInited notExpired {
         require(_checkPosition(), "Option is out of the money");
 
         uint256 amountToPay = strikeValue();
@@ -99,7 +103,7 @@ contract CallOption {
         return uint256(price) >= strikePrice;
     }
 
-    function cancel() external onlyCreator notBought isInited {
+    function cancel() external onlyCreator notBought isInited notExpired {
         require(IERC20(asset).transfer(creator, quantity), "Asset transfer failed");
         executed = true;
     }
@@ -112,7 +116,7 @@ contract CallOption {
         executed = true;
     }
 
-    function adjustPremium(uint256 newPremium) external onlyCreator notBought {
+    function adjustPremium(uint256 newPremium) external onlyCreator notBought notExpired {
         premium = newPremium;
     }
 
