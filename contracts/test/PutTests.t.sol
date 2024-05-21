@@ -65,7 +65,7 @@ contract PutOptionTest is Test {
         solERC20.approve(address(putOption), putOption.strikeValue());
         putOption.execute();
         vm.stopPrank();
-        
+
         assertEq(solERC20.balanceOf(creator), putOption.quantity());
         assertEq(daiERC20.balanceOf(buyer), putOption.strikeValue());
         assertEq(daiERC20.balanceOf(creator), 100e18);
@@ -127,7 +127,7 @@ contract PutOptionTest is Test {
         assertEq(putOption.bought(), true);
         assertEq(putOption.executed(), false);
         assertEq(putOption.buyer(), buyer);
-        
+
         vm.warp(block.timestamp + 8 days);
         vm.prank(creator);
         putOption.withdraw();
@@ -184,7 +184,7 @@ contract PutOptionTest is Test {
         vm.expectRevert();
         putOption2.execute();
         vm.stopPrank();
-        
+
         assertEq(solERC20.balanceOf(buyer), 1e18);
         assertEq(daiERC20.balanceOf(creator), 100e18);
         assertEq(putOption2.executed(), false);
