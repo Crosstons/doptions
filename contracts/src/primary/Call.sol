@@ -122,6 +122,6 @@ contract CallOption {
     }
 
     function strikeValue() public view returns (uint256) {
-        return (strikePrice * quantity) / (10**priceOracle.decimals());
+        return (strikePrice * quantity) / (10 ** priceOracle.decimals());
     }
 }

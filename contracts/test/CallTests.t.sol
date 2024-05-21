@@ -63,7 +63,7 @@ contract CallOptionTest is Test {
         daiERC20.approve(address(callOption), callOption.strikeValue());
         callOption.execute();
         vm.stopPrank();
-        
+
         assertEq(solERC20.balanceOf(buyer), callOption.quantity());
         assertEq(daiERC20.balanceOf(buyer), 20e18);
         assertEq(daiERC20.balanceOf(creator), 280e18);
@@ -121,7 +121,7 @@ contract CallOptionTest is Test {
         assertEq(callOption.executed(), false);
         assertEq(callOption.buyer(), buyer);
         assertEq(callOption.strikeValue(), 180e18);
-        
+
         vm.warp(block.timestamp + 8 days);
         vm.prank(creator);
         callOption.withdraw();
@@ -174,7 +174,7 @@ contract CallOptionTest is Test {
         vm.expectRevert();
         callOption2.execute();
         vm.stopPrank();
-        
+
         assertEq(solERC20.balanceOf(buyer), 0);
         assertEq(daiERC20.balanceOf(buyer), 200e18);
         assertEq(daiERC20.balanceOf(creator), 100e18);

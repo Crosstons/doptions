@@ -124,7 +124,7 @@ contract CallBasketOption {
     function _getAssetValue(address asset, uint256 quantity) internal view returns (uint256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(priceOracles[asset]);
         (, int256 price,,,) = priceFeed.latestRoundData();
-        return (uint256(price) * quantity) / (10**priceFeed.decimals());
+        return (uint256(price) * quantity) / (10 ** priceFeed.decimals());
     }
 
     function cancel() external onlyCreator notBought isInited notExpired {
