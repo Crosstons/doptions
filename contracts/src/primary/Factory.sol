@@ -68,8 +68,9 @@ contract OptionsFactory is Ownable {
         address priceOracle = priceOracles[_asset];
         require(priceOracle != address(0), "Price oracle not set for this asset");
 
-        CallOption _newCallOption =
-            new CallOption(_asset, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle);
+        CallOption _newCallOption = new CallOption(
+            _asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle
+        );
         callOptions.push(address(_newCallOption));
 
         emit CallOptionCreated(address(_newCallOption), _asset, _premium, _strikePrice, _quantity, _expiration);
@@ -86,7 +87,7 @@ contract OptionsFactory is Ownable {
         require(priceOracle != address(0), "Price oracle not set for this asset");
 
         PutOption _newPutOption =
-            new PutOption(_asset, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle);
+            new PutOption(_asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle);
         putOptions.push(address(_newPutOption));
 
         emit PutOptionCreated(address(_newPutOption), _asset, _premium, _strikePrice, _quantity, _expiration);
@@ -105,8 +106,9 @@ contract OptionsFactory is Ownable {
             require(priceOracles[_assets[i]] == _priceOracles[i], "Invalid price oracle is being passed as input");
         }
 
-        CallBasketOption _newBasketOption =
-            new CallBasketOption(_assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken);
+        CallBasketOption _newBasketOption = new CallBasketOption(
+            msg.sender, _assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken
+        );
         basketOptions.push(address(_newBasketOption));
 
         emit CallBasketOptionCreated(
@@ -127,8 +129,9 @@ contract OptionsFactory is Ownable {
             require(priceOracles[_assets[i]] == _priceOracles[i], "Invalid price oracle is being passed as input");
         }
 
-        PutBasketOption _newBasketOption =
-            new PutBasketOption(_assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken);
+        PutBasketOption _newBasketOption = new PutBasketOption(
+            msg.sender, _assets, _priceOracles, _quantities, _premium, _strikeValue, _expiration, premiumToken
+        );
         basketOptions.push(address(_newBasketOption));
 
         emit PutBasketOptionCreated(

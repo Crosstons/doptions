@@ -20,6 +20,7 @@ contract PutOption {
 
     constructor(
         address _asset,
+        address _creator,
         uint256 _premium,
         uint256 _strikePrice,
         uint256 _quantity,
@@ -28,7 +29,7 @@ contract PutOption {
         address _priceOracle
     ) {
         asset = _asset;
-        creator = msg.sender;
+        creator = _creator;
         premium = _premium;
         strikePrice = _strikePrice;
         quantity = _quantity;
@@ -104,7 +105,7 @@ contract PutOption {
     }
 
     function cancel() external onlyCreator notBought isInited notExpired {
-        require(IERC20(asset).transfer(creator, quantity), "Asset transfer failed");
+        require(premiumToken.transfer(creator, strikeValue()), "Asset transfer failed");
         executed = true;
     }
 
@@ -112,7 +113,7 @@ contract PutOption {
         require(block.timestamp > expiration, "Option not expired yet");
         require(!executed, "Option already executed");
 
-        require(IERC20(asset).transfer(creator, quantity), "Asset transfer failed");
+        require(premiumToken.transfer(creator, strikeValue()), "Asset transfer failed");
         executed = true;
     }
 
@@ -121,6 +122,6 @@ contract PutOption {
     }
 
     function strikeValue() public view returns (uint256) {
-        return strikePrice * quantity;
+        return (strikePrice * quantity) / (10**priceOracle.decimals());
     }
 }

@@ -20,6 +20,7 @@ contract CallOption {
 
     constructor(
         address _asset,
+        address _creator,
         uint256 _premium,
         uint256 _strikePrice,
         uint256 _quantity,
@@ -28,7 +29,7 @@ contract CallOption {
         address _priceOracle
     ) {
         asset = _asset;
-        creator = msg.sender;
+        creator = _creator;
         premium = _premium;
         strikePrice = _strikePrice;
         quantity = _quantity;
@@ -121,6 +122,6 @@ contract CallOption {
     }
 
     function strikeValue() public view returns (uint256) {
-        return strikePrice * quantity;
+        return (strikePrice * quantity) / (10**priceOracle.decimals());
     }
 }
