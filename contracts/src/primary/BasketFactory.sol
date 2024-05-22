@@ -5,7 +5,7 @@ import {CallBasketOption} from "./CallBasket.sol";
 import {PutBasketOption} from "./PutBasket.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BasketsFactory is Ownable {
+contract BasketFactory is Ownable {
 
     address[] public callBasketOptions;
     address[] public putBasketOptions;
