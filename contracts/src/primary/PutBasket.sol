@@ -123,9 +123,7 @@ contract PutBasketOption {
     }
 
     function cancel() external onlyCreator notBought isInited notExpired {
-        for (uint256 i = 0; i < assets.length; i++) {
-            require(IERC20(assets[i].assetAddress).transfer(creator, assets[i].quantity), "Asset transfer failed");
-        }
+        require(premiumToken.transfer(creator, strikeValue), "Asset transfer failed");
         executed = true;
     }
 
@@ -133,9 +131,7 @@ contract PutBasketOption {
         require(block.timestamp > expiration, "Option not expired yet");
         require(!executed, "Option already executed");
 
-        for (uint256 i = 0; i < assets.length; i++) {
-            require(IERC20(assets[i].assetAddress).transfer(creator, assets[i].quantity), "Asset transfer failed");
-        }
+        require(premiumToken.transfer(creator, strikeValue), "Asset transfer failed");
         executed = true;
     }
 
