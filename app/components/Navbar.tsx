@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "../components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import ConnectButton from "../web3/web3Modal";
 
 export default function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
