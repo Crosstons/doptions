@@ -21,9 +21,8 @@ contract TokenScript is Script {
         address account = vm.addr(privateKey);
 
         vm.startBroadcast(privateKey);
-        Token token = new Token("Scroll TEST", "sTEST");
+        Token token = new Token("AMOY USDT", "aUSDT");
         token.mint(account, 100e18);
         vm.stopBroadcast();
     }
-
 }
