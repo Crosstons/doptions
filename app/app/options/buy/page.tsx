@@ -31,68 +31,78 @@ const Page = () => {
 
     return (
         <div className="flex flex-row h-screen bg-black text-white pt-32">
-            {/* Call Options Side */}
-            <div className="w-1/2 overflow-hidden p-4">
-                <h2 className="text-2xl font-bold mb-4 text-green-500 w-full text-center">Call Options</h2>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-                        <thead>
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Token</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Strike Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Premium</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Expiration</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-neutral-700 ">
-                            {optionsData.calls.map((option, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 ">
-                                        <img src={option.tokenImg} alt={option.tokenImg} className="w-8 h-8 rounded-full" />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity} {option.tokenImg}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      {/* Call Options Side */}
+      <div className="w-1/2 overflow-hidden p-4">
+        <h2 className="text-2xl font-bold mb-4 text-green-500 w-full text-center"></h2>
+        <div className="overflow-x-auto">
+<div className="relative overflow-x-auto shadow-md sm:rounded-lg border-t border-r border-l border-gray-600">
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <caption className="p-5 text-2xl font-semibold text-left rtl:text-right text-green-500 bg-black dark:text-green-500">
+        Call Options
+            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quae reprehenderit sunt sint dolor eius, magnam recusandae ea tenetur iusto.</p>
+        </caption>
+        <thead className="text-xs text-gray-100 uppercase bg-gray-900">
+            <tr>
+                <th scope="col" className="px-6 py-3">Token</th>
+                <th scope="col" className="px-6 py-3">Strike Price</th>
+                <th scope="col" className="px-6 py-3">Premium</th>
+                <th scope="col" className="px-6 py-3">Expiration</th>
+                <th scope="col" className="px-6 py-3">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+        {optionsData.calls.map((option, index) => (
+                <tr key={index} className='border-b border-gray-600'>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.tokenImg}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                </tr>
+              ))}
+        </tbody>
+    </table>
+</div>
 
-            {/* Put Options Side */}
-            <div className="w-1/2 overflow-hidden p-4 border-l border-gray-700">
-                <h2 className="text-2xl font-bold mb-4 text-red-500 w-full text-center">Put Options</h2>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-                        <thead>
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Token</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Strike Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Premium</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Expiration</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                            {optionsData.puts.map((option, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                        <img src={option.tokenImg} alt={option.tokenImg} className="w-8 h-8 rounded-full" />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity} {option.tokenImg}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
+      </div>
+
+      {/* Put Options Side */}
+      <div className="w-1/2 overflow-hidden p-4">
+        <h2 className="text-2xl font-bold mb-4 text-green-500 w-full text-center"></h2>
+        <div className="overflow-x-auto">
+<div className="relative overflow-x-auto shadow-md sm:rounded-lg border-t border-r border-l border-gray-600">
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <caption className="p-5 text-2xl font-semibold text-left rtl:text-right text-red-500 bg-black">
+        Put Options
+            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus quisquam accusamus in quaerat omnis molestiae aut recusandae ab quae alias.</p>
+        </caption>
+        <thead className="text-xs text-gray-100 uppercase bg-gray-900">
+            <tr>
+                <th scope="col" className="px-6 py-3">Token</th>
+                <th scope="col" className="px-6 py-3">Strike Price</th>
+                <th scope="col" className="px-6 py-3">Premium</th>
+                <th scope="col" className="px-6 py-3">Expiration</th>
+                <th scope="col" className="px-6 py-3">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+        {optionsData.puts.map((option, index) => (
+                <tr key={index} className='border-b border-gray-600'>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.tokenImg}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                </tr>
+              ))}
+        </tbody>
+    </table>
+</div>
+
+        </div>
+      </div>
+    </div>
     );
 }
 
