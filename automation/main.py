@@ -1,12 +1,43 @@
 import time
-from web3 import Web3
 import json
+from web3 import Web3
+from eth_account import Account
+from datetime import datetime
 
 with open('automation/abi/chainlink.json', 'r') as abi_file:
     chainlink_abi = json.load(abi_file)
 
+with open('automation/abi/factory.json', 'r') as abi_file:
+    factory_abi = json.load(abi_file)
+
+with open('automation/abi/callOption.json', 'r') as abi_file:
+    call_abi = json.load(abi_file)
+
+with open('automation/abi/putOption.json', 'r') as abi_file:
+    put_abi = json.load(abi_file)
+
+with open('automation/abi/erc20.json', 'r') as abi_file:
+    erc20_abi = json.load(abi_file)
+
 alchemy_url = ""
 web3 = Web3(Web3.HTTPProvider(alchemy_url))
+
+FACTORY = "0x4633BFBb343F131deF95ac1fd518Ed4495092063"
+USDT = "0xB1b104D79dE24513338bdB6CB9Df468110010E5F"
+PRIVATE_KEY = ""
+
+account = Account.from_key(PRIVATE_KEY)
+
+web3.eth.default_account = account.address
+
+token_address = {
+    "BTCUSD": "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
+    "ETHUSD": "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841",
+    "LINKUSD": "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1",
+    "MATICUSD": "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b",
+    "SOLUSD": "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E",
+    "SANDUSD": "0xAB5aBA3B6ABB3CdaF5F2176A693B3C012663B6c3"
+}
 
 def get_price(asset: str) -> float:
     asset_addresses = {
@@ -26,10 +57,38 @@ def get_price(asset: str) -> float:
     latestData = contract.functions.latestRoundData().call()
     return latestData[1] / 10**8
 
+def days_until_expiration(expiration_timestamp):
+    current_time = datetime.now()
+    expiration_time = datetime.fromtimestamp(expiration_timestamp)
+    delta = expiration_time - current_time
+    return delta.days
+
 def buy_option(option_type: str, asset: str, premium_range: tuple, strike_price_range: tuple, expiration_range: tuple):
-    print(f"Buying {option_type} option for {asset}")
-    # Interaction with smart contract to buy option
-    pass
+    factory = web3.eth.contract(address=FACTORY, abi=factory_abi)
+    
+    if option_type == "CALL":
+        options = factory.functions.getCallOptions().call()
+    else:
+        options = factory.functions.getPutOptions().call()
+
+    for _opt in options:
+        _optContract = web3.eth.contract(address=_opt, abi=call_abi if option_type == "CALL" else put_abi)
+        _asset = _optContract.functions.asset().call()
+
+        if _asset == token_address.get(asset):
+            _expiration = days_until_expiration(_optContract.functions.expiration().call())
+            _premium = web3.from_wei(_optContract.functions.premium().call(), 'ether')
+            _strike_price = _optContract.functions.strikePrice().call() / 10**8
+
+            if (expiration_range[0] <= _expiration <= expiration_range[1] and
+                premium_range[0] <= _premium <= premium_range[1] and
+                strike_price_range[0] <= _strike_price <= strike_price_range[1]):
+
+                tx = _optContract.functions.buy().transact()
+                web3.eth.waitForTransactionReceipt(tx)
+                print(f"Bought {option_type} option for {asset} with premium {_premium}, strike price {_strike_price}, and expiration {_expiration}")
+                return
+    print(f"No suitable {option_type} option found for {asset}")
 
 def write_option(option_type: str, asset: str, premium: float, quantity: float, strike_price: float, expiration: int):
     print(f"Writing {option_type} option for {asset}")
