@@ -1,19 +1,34 @@
+"use client"; 
+
 import React from 'react';
+import { useState, useEffect } from 'react';
+import { getOptions, OptionData } from './interactions';
+import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { BackgroundBeams } from '@/components/ui/background-beams';
 
-// Sample data for options
-const optionsData = {
-    calls: [
-        { tokenImg: "/path-to-token-image1.png", strikePrice: "3000", premium: "150", expirationDate: "2023-12-01", quantity: "10" },
-        { tokenImg: "/path-to-token-image2.png", strikePrice: "3100", premium: "120", expirationDate: "2023-12-01", quantity: "5" }
-    ],
-    puts: [
-        { tokenImg: "/path-to-token-image3.png", strikePrice: "2900", premium: "180", expirationDate: "2023-12-01", quantity: "8" },
-        { tokenImg: "/path-to-token-image4.png", strikePrice: "2800", premium: "200", expirationDate: "2023-12-01", quantity: "10" }
-    ]
-};
-
 const Page = () => {
+
+    const { address, chainId, isConnected } = useWeb3ModalAccount();
+    const { walletProvider } = useWeb3ModalProvider();
+
+    const [optionsData, setOptionsData] = useState<{ calls: OptionData[], puts: OptionData[] }>({
+        calls: [],
+        puts: []
+    })
+
+    useEffect(() => {
+        if (isConnected && walletProvider) {
+          (async () => {
+            try {
+              const data = await getOptions(walletProvider);
+              setOptionsData(data);
+            } catch (error) {
+              console.error(error);
+            }
+          })();
+        }
+      }, [isConnected, walletProvider]);
+
     return (
         <div className="flex flex-row h-screen bg-black text-white pt-32">
             {/* Call Options Side */}
@@ -34,12 +49,12 @@ const Page = () => {
                             {optionsData.calls.map((option, index) => (
                                 <tr key={index}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 ">
-                                        <img src={option.tokenImg} alt="Token" className="w-8 h-8 rounded-full" />
+                                        <img src={option.tokenImg} alt={option.tokenImg} className="w-8 h-8 rounded-full" />
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.strikePrice}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.premium}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity} {option.tokenImg}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -65,12 +80,12 @@ const Page = () => {
                             {optionsData.puts.map((option, index) => (
                                 <tr key={index}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                        <img src={option.tokenImg} alt="Token" className="w-8 h-8 rounded-full" />
+                                        <img src={option.tokenImg} alt={option.tokenImg} className="w-8 h-8 rounded-full" />
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.strikePrice}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.premium}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.strikePrice}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity} {option.tokenImg}</td>
                                 </tr>
                             ))}
                         </tbody>

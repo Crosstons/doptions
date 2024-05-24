@@ -1,4 +1,3 @@
-import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { BrowserProvider, Contract, formatUnits } from 'ethers'
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { callOptionABI } from '@/web3/CallOptionABI';
@@ -15,7 +14,7 @@ const addressTokenMapping : { [key : string] : string } = {
     "0xAB5aBA3B6ABB3CdaF5F2176A693B3C012663B6c3": "SAND"
 }
 
-interface OptionData {
+export interface OptionData {
     tokenImg: string;
     strikePrice: string;
     premium: string;
@@ -23,21 +22,18 @@ interface OptionData {
     quantity: string;
 }
 
-const formatTimestamp = (timestamp: number): string => {
-    const date = new Date(timestamp * 1000);
+const formatTimestamp = (timestamp: bigint): string => {
+    const date = new Date(Number(timestamp) * 1000);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${day}:${month}:${year} ${hours}:${minutes}`;
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export const getOptions = async () => {
-    const { address, chainId, isConnected } = useWeb3ModalAccount()
-    const { walletProvider } = useWeb3ModalProvider()
-
-    if (!isConnected) throw Error('User disconnected')
+export const getOptions = async (walletProvider : any) => {
+//    if (!isConnected) throw Error('User disconnected')
     if (!walletProvider) throw new Error('No wallet provider found')
 
     const ethersProvider = new BrowserProvider(walletProvider)
@@ -52,8 +48,8 @@ export const getOptions = async () => {
         puts: []
     };
 
-    for(const addr in callOptions) {
-        const _callContract = new Contract(addr, callOptionABI, signer)
+    for(const i in callOptions) {
+        const _callContract = new Contract(callOptions[i], callOptionABI, signer)
         const _bought = await _callContract.bought()
         const _inited = await _callContract.inited()
         if(_inited && !_bought) { 
@@ -70,8 +66,8 @@ export const getOptions = async () => {
         }
     }
 
-    for(const addr in putOptions) {
-        const _putContract = new Contract(addr, putOptionABI, signer)
+    for(const i in putOptions) {
+        const _putContract = new Contract(putOptions[i], putOptionABI, signer)
         const _bought = await _putContract.bought()
         const _inited = await _putContract.inited()
         if(_inited && !_bought) { 
