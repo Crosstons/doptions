@@ -34,10 +34,6 @@ createWeb3Modal({
     enableOnramp: true
 })
 
-export function Web3Modal({ children }) {
+export function Web3Modal({ children } : any) {
     return children
-}
-
-export default function ConnectButton() {
-    return <w3m-button />
 }
