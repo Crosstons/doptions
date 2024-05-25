@@ -1,8 +1,14 @@
 import time
 import json
 from web3 import Web3
+from web3.middleware import geth_poa_middleware
 from eth_account import Account
-from datetime import datetime
+from datetime import datetime, timedelta
+
+"""
+    add your private key below to start using the automated strategy
+"""
+PRIVATE_KEY = ""
 
 with open('automation/abi/chainlink.json', 'r') as abi_file:
     chainlink_abi = json.load(abi_file)
@@ -19,16 +25,16 @@ with open('automation/abi/putOption.json', 'r') as abi_file:
 with open('automation/abi/erc20.json', 'r') as abi_file:
     erc20_abi = json.load(abi_file)
 
-alchemy_url = ""
+alchemy_url = "https://rpc-amoy.polygon.technology/"
 web3 = Web3(Web3.HTTPProvider(alchemy_url))
 
 FACTORY = "0x4633BFBb343F131deF95ac1fd518Ed4495092063"
 USDT = "0xB1b104D79dE24513338bdB6CB9Df468110010E5F"
-PRIVATE_KEY = ""
 
 account = Account.from_key(PRIVATE_KEY)
 
 web3.eth.default_account = account.address
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 token_address = {
     "BTCUSD": "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
@@ -63,37 +69,131 @@ def days_until_expiration(expiration_timestamp):
     delta = expiration_time - current_time
     return delta.days
 
-def buy_option(option_type: str, asset: str, premium_range: tuple, strike_price_range: tuple, expiration_range: tuple):
-    factory = web3.eth.contract(address=FACTORY, abi=factory_abi)
-    
-    if option_type == "CALL":
-        options = factory.functions.getCallOptions().call()
-    else:
-        options = factory.functions.getPutOptions().call()
+def days_to_unix_timestamp(days_from_now: int) -> int:
+    future_time = datetime.now() + timedelta(days=days_from_now)
+    return int(future_time.timestamp())
 
-    for _opt in options:
-        _optContract = web3.eth.contract(address=_opt, abi=call_abi if option_type == "CALL" else put_abi)
-        _asset = _optContract.functions.asset().call()
+def buy_option(option_type: str, asset: str, premium_range: tuple, strike_price_range: tuple, expiration_range: tuple) -> bool:
+    try:
+        factory = web3.eth.contract(address=FACTORY, abi=factory_abi)
+        ausdt = web3.eth.contract(address=USDT, abi=erc20_abi)
 
-        if _asset == token_address.get(asset):
-            _expiration = days_until_expiration(_optContract.functions.expiration().call())
-            _premium = web3.from_wei(_optContract.functions.premium().call(), 'ether')
-            _strike_price = _optContract.functions.strikePrice().call() / 10**8
+        if option_type == "CALL":
+            options = factory.functions.getCallOptions().call()
+        else:
+            options = factory.functions.getPutOptions().call()
 
-            if (expiration_range[0] <= _expiration <= expiration_range[1] and
-                premium_range[0] <= _premium <= premium_range[1] and
-                strike_price_range[0] <= _strike_price <= strike_price_range[1]):
+        for _opt in options:
+            _optContract = web3.eth.contract(address=_opt, abi=call_abi if option_type == "CALL" else put_abi)
+            _asset = _optContract.functions.asset().call()
 
-                tx = _optContract.functions.buy().transact()
-                web3.eth.waitForTransactionReceipt(tx)
-                print(f"Bought {option_type} option for {asset} with premium {_premium}, strike price {_strike_price}, and expiration {_expiration}")
-                return
-    print(f"No suitable {option_type} option found for {asset}")
+            if _asset == token_address.get(asset):
+                _expiration = days_until_expiration(_optContract.functions.expiration().call())
+                _premium = web3.from_wei(_optContract.functions.premium().call(), 'ether')
+                _strike_price = _optContract.functions.strikePrice().call() / 10**8
 
-def write_option(option_type: str, asset: str, premium: float, quantity: float, strike_price: float, expiration: int):
-    print(f"Writing {option_type} option for {asset}")
-    # Interaction with smart contract to write option
-    pass
+                if (expiration_range[0] <= _expiration <= expiration_range[1] and
+                    premium_range[0] <= _premium <= premium_range[1] and
+                    strike_price_range[0] <= _strike_price <= strike_price_range[1]):
+                    
+                    appr = ausdt.functions.approve(_opt, int(web3.to_wei(_premium, 'ether'))).build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address), 'gas': 200000,'gasPrice': web3.to_wei('2', 'gwei') })
+                    signed_appr = web3.eth.account.sign_transaction(appr, private_key=PRIVATE_KEY)
+                    appr_hash = web3.eth.send_raw_transaction(signed_appr.rawTransaction)
+                    web3.eth.wait_for_transaction_receipt(appr_hash)
+                    print(f"Aprrove Tx: {appr_hash.hex()}")
+
+                    tx = _optContract.functions.buy().build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address),'gas': 200000, 'gasPrice': web3.to_wei('2', 'gwei') })
+                    signed_tx = web3.eth.account.sign_transaction(tx, private_key=PRIVATE_KEY)
+                    tx_hash = web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+                    web3.eth.wait_for_transaction_receipt(tx_hash)
+                    print(f"Buy Option Tx: {tx_hash.hex()}")
+                    print(f"Bought {option_type} option for {asset} with premium {_premium}, strike price {_strike_price}, and expiration {_expiration}")
+                    return True
+        print(f"No suitable {option_type} option found for {asset}")
+        return False
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
+
+def write_option(option_type: str, asset: str, premium: float, quantity: float, strike_price: float, expiration: int) -> bool:
+    try:
+        factory = web3.eth.contract(address=FACTORY, abi=factory_abi)
+        ausdt = web3.eth.contract(address=USDT, abi=erc20_abi)
+        assetContract = web3.eth.contract(address=token_address[asset], abi=erc20_abi)
+
+        if option_type == "CALL":
+            create_txn = factory.functions.createCallOption(
+                token_address[asset], 
+                int(web3.to_wei(premium, 'ether')), 
+                int(strike_price * 10**8), 
+                int(quantity * 10**18), 
+                days_to_unix_timestamp(expiration)
+            ).build_transaction({
+                'from': account.address, 
+                'nonce': web3.eth.get_transaction_count(account.address),
+                'gas': 2000000,
+                'gasPrice': web3.to_wei('2', 'gwei')
+            })
+
+            signed_create_txn = web3.eth.account.sign_transaction(create_txn, private_key=PRIVATE_KEY)
+            create_txn_hash = web3.eth.send_raw_transaction(signed_create_txn.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(create_txn_hash)
+            print(f"Create Option Tx: {create_txn_hash.hex()}")
+
+            created_option_address = factory.functions.getCallOptions().call()[-1]
+            optContract = web3.eth.contract(address=created_option_address, abi=call_abi)
+            
+            appr = assetContract.functions.approve(created_option_address, int(quantity * 10**18)).build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address), 'gas': 200000 ,'gasPrice': web3.to_wei('2', 'gwei') })
+            signed_appr = web3.eth.account.sign_transaction(appr, private_key=PRIVATE_KEY)
+            appr_hash = web3.eth.send_raw_transaction(signed_appr.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(appr_hash)
+            print(f"Aprrove Tx: {appr_hash.hex()}")
+
+            init_txn = optContract.functions.init().build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address),'gas': 200000, 'gasPrice': web3.to_wei('2', 'gwei') })
+            signed_init = web3.eth.account.sign_transaction(init_txn, private_key=PRIVATE_KEY)
+            init_txn_hash = web3.eth.send_raw_transaction(signed_init.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(init_txn_hash)
+            print(f"Init Option Tx: {init_txn_hash.hex()}")
+
+        else:
+            create_txn = factory.functions.createPutOption(
+                token_address[asset], 
+                int(web3.to_wei(premium, 'ether')), 
+                int(strike_price * 10**8),
+                int(quantity * 10**18), 
+                days_to_unix_timestamp(expiration)
+            ).build_transaction({
+                'from': account.address, 
+                'nonce': web3.eth.get_transaction_count(account.address),
+                'gas': 2000000,
+                'gasPrice': web3.to_wei('2', 'gwei')
+            })
+
+            signed_create_txn = web3.eth.account.sign_transaction(create_txn, private_key=PRIVATE_KEY)
+            create_txn_hash = web3.eth.send_raw_transaction(signed_create_txn.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(create_txn_hash)
+            print(f"Create Option Tx: {create_txn_hash.hex()}")
+
+            created_option_address = factory.functions.getPutOptions().call()[-1]
+            optContract = web3.eth.contract(address=created_option_address, abi=put_abi)
+
+            strikeValue = optContract.functions.strikeValue().call()
+            appr = ausdt.functions.approve(created_option_address, strikeValue).build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address), 'gas': 200000 ,'gasPrice': web3.to_wei('2', 'gwei') })
+            signed_appr = web3.eth.account.sign_transaction(appr, private_key=PRIVATE_KEY)
+            appr_hash = web3.eth.send_raw_transaction(signed_appr.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(appr_hash)
+            print(f"Aprrove Tx: {appr_hash.hex()}")
+
+            init_txn = optContract.functions.init().build_transaction({ 'from': account.address, 'nonce': web3.eth.get_transaction_count(account.address),'gas': 200000, 'gasPrice': web3.to_wei('2', 'gwei') })
+            signed_init = web3.eth.account.sign_transaction(init_txn, private_key=PRIVATE_KEY)
+            init_txn_hash = web3.eth.send_raw_transaction(signed_init.rawTransaction)
+            web3.eth.wait_for_transaction_receipt(init_txn_hash)
+            print(f"Init Option Tx: {init_txn_hash.hex()}")
+
+        print(f"Written {option_type} option for {asset} with premium {premium}, strike price {strike_price}, quantity {quantity}, and expiration {expiration}")
+        return True
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return False
 
 def get_valid_input(prompt, valid_range):
     while True:
@@ -155,7 +255,7 @@ def main():
         premium = float(input("Enter premium: "))
         quantity = float(input("Enter quantity: "))
         strike_price = float(input("Enter strike price: "))
-        expiration = int(input("Enter expiration: "))
+        expiration = int(input("Enter expiration (days): "))
 
     while True:
         try:
@@ -164,24 +264,33 @@ def main():
 
             if condition == 1 and current_price > price:
                 if action == 1:
-                    buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
+                    result = buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
                 else:
-                    write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
-                break
+                    result = write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
+                if result:
+                    print("---------------------------------------------------------------------------")
+                    print("Task Completed!")
+                    break
             elif condition == 2 and current_price < price:
                 if action == 1:
-                    buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
+                    result = buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
                 else:
-                    write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
-                break
+                    result = write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
+                if result:
+                    print("---------------------------------------------------------------------------")
+                    print("Task Completed!")
+                    break
             elif condition == 3 and price <= current_price <= price2:
                 if action == 1:
-                    buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
+                    result = buy_option(option_type, selected_asset, premium_range, strike_price_range, expiration_range)
                 else:
-                    write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
-                break
+                    result = write_option(option_type, selected_asset, premium, quantity, strike_price, expiration)
+                if result:
+                    print("---------------------------------------------------------------------------")
+                    print("Task Completed!")
+                    break
 
-            time.sleep(15)
+            time.sleep(30)
         except ValueError as e:
             print(e)
 

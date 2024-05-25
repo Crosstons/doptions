@@ -39,7 +39,7 @@ const Page = () => {
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <caption className="p-5 text-2xl font-semibold text-left rtl:text-right text-green-500 bg-black dark:text-green-500">
         Call Options
-            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quae reprehenderit sunt sint dolor eius, magnam recusandae ea tenetur iusto.</p>
+            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Buying these kind of contracts mean you have an option to buy the underlying asset at the strike price if the price of the asset rises above the strike price before the expiration.</p>
         </caption>
         <thead className="text-xs text-gray-100 uppercase bg-gray-900">
             <tr>
@@ -75,7 +75,7 @@ const Page = () => {
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <caption className="p-5 text-2xl font-semibold text-left rtl:text-right text-red-500 bg-black">
         Put Options
-            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus quisquam accusamus in quaerat omnis molestiae aut recusandae ab quae alias.</p>
+            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Buying these kind of contracts mean you have an option to sell the underlying asset at the strike price if the price of the asset drops below the strike price before the expiration.</p>
         </caption>
         <thead className="text-xs text-gray-100 uppercase bg-gray-900">
             <tr>
