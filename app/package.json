@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.0.2",
+    "@tabler/icons-react": "^3.5.0",
     "@web3modal/ethers": "^4.2.1",
     "clsx": "^2.1.1",
     "ethers": "^6.12.1",
