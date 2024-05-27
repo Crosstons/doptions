@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 
-const OptionForm = () => {
+const OptionForm = ({ params }: { params: { token : string } }) => {
   const [activeTab, setActiveTab] = useState('call');
 
   // Function to dynamically set the tab class based on active state
@@ -9,6 +9,8 @@ const OptionForm = () => {
     `${activeTab === tab ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-400'} 
      inline-block w-full p-4 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
   );
+
+  console.log(params.token)
 
   return (
     <div className="bg-gray-900 p-6 min-h-screen">

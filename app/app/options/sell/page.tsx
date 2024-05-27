@@ -10,6 +10,7 @@ import san from '@/public/Sand_logo.png'
 import eth from '@/public/Ethereum_logo.png'
 import mat from '@/public/Matic_logo.png'
 import { HoverEffect } from "@/components/ui/card-hover-effect";
+import Link from "next/link";
 
 const tokens = [
     { id: 1, name: "Bitcoin", image: btc },
@@ -27,12 +28,14 @@ export default function Page() {
       <div className="flex flex-wrap justify-center items-center mt-8">
         
       {tokens.map((token) => (
+        <Link href={`/options/sell/${token.name.toLowerCase()}`}>
         <div key={token.id} className="p-4 m-2 border shadow-lg rounded-lg bg-black">
           <div className="flex flex-col items-center justify-center">
             <Image src={token.image} alt={token.name} width={100} height={100} className="min-w-[100px] min-h-[100px] object-contain"/>
             <p className="mt-2 text-center text-sm font-semibold text-white">{token.name}</p>
           </div>
         </div>
+        </Link>
       ))}
     </div>
     </LampContainer>
