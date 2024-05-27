@@ -9,12 +9,14 @@ export default function DotBackgroundDemo() {
       <h1 className="text-3xl px-4 md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sanss max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto mb-4">What is your investment type?</h1>
       <div className="space-x-4">
                 {/* Button for "Write an Option" */}
+                <Link href="/options/write">
                 <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#882222_0%,#b73434_50%,#f86161_100%)]" />
                 <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-6 py-2 text-sm font-medium text-white backdrop-blur-3xl">
                     Write an option
                 </span>
                 </button>
+                </Link>
                 
                 {/* Button for "Buy an Option" */}
                 <Link href="/options/buy">

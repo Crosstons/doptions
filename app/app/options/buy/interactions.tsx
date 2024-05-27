@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract, formatUnits } from 'ethers'
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { callOptionABI } from '@/web3/CallOptionABI';
 import { putOptionABI } from '@/web3/PutOptionABI';

@@ -1,16 +1,55 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
 
 const OptionForm = ({ params }: { params: { token : string } }) => {
-  const [activeTab, setActiveTab] = useState('call');
 
-  // Function to dynamically set the tab class based on active state
+  const { address, chainId, isConnected } = useWeb3ModalAccount();
+  const { walletProvider } = useWeb3ModalProvider();
+
+  const [activeTab, setActiveTab] = useState('call');
+  const [strikePrice, setStrikePrice] = useState('');
+  const [premium, setPremium] = useState('');
+  const [expiration, setExpiration] = useState('');
+  const [quantity, setQuantity] = useState('');
+
+  useEffect(() => {
+    if (isConnected && walletProvider) {
+      (async () => {
+        try {
+
+        } catch (error) {
+          console.error(error);
+        }
+      })();
+    }
+  }, [isConnected, walletProvider]);
+
   const tabClass = (tab: string) => (
     `${activeTab === tab ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-400'} 
      inline-block w-full p-4 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
   );
 
-  console.log(params.token)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!strikePrice || !premium || !expiration || !quantity) {
+      alert('All fields are required.');
+      return;
+    }
+
+    const formData = {
+      type: activeTab.toUpperCase(),
+      token: params.token,
+      strikePrice,
+      premium,
+      expiration,
+      quantity
+    };
+
+    console.log('Form Data:', formData);
+    // Add your form submission logic here
+  };
 
   return (
     <div className="bg-gray-900 p-6 min-h-screen">
@@ -36,28 +75,33 @@ const OptionForm = ({ params }: { params: { token : string } }) => {
           </ul>
         </div>
 
-        <form className="bg-gray-800 p-5 rounded-lg">
+        <form className="bg-gray-800 p-5 rounded-lg" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-300">Strike Price</label>
             <input
               type="number"
+              value={strikePrice}
+              onChange={(e) => setStrikePrice(e.target.value)}
               className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
-              placeholder="Enter strike price"
+              placeholder="Enter Strike Price (USD)"
             />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-300">Premium</label>
             <input
               type="number"
+              value={premium}
+              onChange={(e) => setPremium(e.target.value)}
               className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
-              placeholder="Enter premium amount"
+              placeholder="Enter Premium (DAI)"
             />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-300">Expiration Date and Time</label>
             <input
-            placeholder='55'
               type="datetime-local"
+              value={expiration}
+              onChange={(e) => setExpiration(e.target.value)}
               className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
             />
           </div>
@@ -65,15 +109,17 @@ const OptionForm = ({ params }: { params: { token : string } }) => {
             <label className="block text-sm font-medium text-gray-300">Quantity</label>
             <input
               type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
               className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
-              placeholder="Enter quantity"
+              placeholder={`Enter ${params.token.toUpperCase()}`}
             />
           </div>
           <button
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Sell
+            Write
           </button>
         </form>
       </div>
