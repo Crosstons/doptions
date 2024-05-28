@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
+import { createOptionCall } from './interactions';
 
 const OptionForm = ({ params }: { params: { token : string } }) => {
 
@@ -30,6 +31,13 @@ const OptionForm = ({ params }: { params: { token : string } }) => {
      inline-block w-full p-4 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
   );
 
+  const convertToUnixTimestamp = (expiration: string) => {
+    const date = new Date(expiration);
+    const unixTimestamp = Math.floor(date.getTime() / 1000);
+    
+    return unixTimestamp;
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -38,17 +46,21 @@ const OptionForm = ({ params }: { params: { token : string } }) => {
       return;
     }
 
+    let unixExpiration = convertToUnixTimestamp(expiration);
+
     const formData = {
       type: activeTab.toUpperCase(),
       token: params.token,
       strikePrice,
       premium,
-      expiration,
+      unixExpiration,
       quantity
     };
 
     console.log('Form Data:', formData);
-    // Add your form submission logic here
+
+    createOptionCall(formData);
+
   };
 
   return (
