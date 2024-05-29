@@ -1,14 +1,14 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
-import { BackgroundBeams } from '@/components/ui/background-beams';
+import { createOptionCall } from './interactions';
+import { priceMulti } from '@/web3/Prices';
 
 type Props = {
   params: {
     token: string;
   };
 };
-import { createOptionCall } from './interactions';
 
 const OptionForm: React.FC<Props> = ({ params }) => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
@@ -19,16 +19,13 @@ const OptionForm: React.FC<Props> = ({ params }) => {
   const [premium, setPremium] = useState('');
   const [expiration, setExpiration] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [livePrice, setLivePrice] = useState('');
+  const [livePrice, setLivePrice] = useState(0);
 
   useEffect(() => {
-    if (isConnected && walletProvider) {
-      // Example to fetch live price, implement your own logic here
-      fetch(`https://api.example.com/price/${params.token}`)
-        .then(response => response.json())
-        .then(data => setLivePrice(data.price))
-        .catch(error => console.error('Failed to fetch price:', error));
-    }
+    (async () => {
+      const _price : any = priceMulti(params.token.toLowerCase());
+      setLivePrice(_price);
+    })();
   }, [isConnected, walletProvider, params.token]);
 
   const tabClass = (tab: 'call' | 'put') => (
@@ -51,11 +48,12 @@ const OptionForm: React.FC<Props> = ({ params }) => {
     }
 
     let unixExpiration = convertToUnixTimestamp(expiration);
+    let strike = Math.ceil(Number(strikePrice) * 10**8);
 
     const formData = {
       type: activeTab.toUpperCase(),
       token: params.token,
-      strikePrice,
+      strike,
       premium,
       unixExpiration,
       quantity
@@ -63,7 +61,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
 
     console.log('Form Data:', formData);
 
-    createOptionCall(formData);
+    createOptionCall(formData, walletProvider);
 
   };
 
@@ -71,7 +69,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
     <div className="bg-[#1a1a1a] p-6 min-h-screen">
       <div className="max-w-xl mx-auto mt-32">
         <div className="text-center mb-4 text-xl font-semibold text-white">
-          Current {params.token} Price: ${livePrice}
+          Current {params.token.toUpperCase()} Price: ${livePrice}
         </div>
         <div className="mb-4">
           <ul className="flex">

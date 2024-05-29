@@ -55,3 +55,21 @@ export const priceSAND = async () => {
     const _decimals = await _priceFeed.methods.decimals().call();
     return (Number(_price[1])/ 10**Number(_decimals));
 }
+
+export const priceMulti = async (token : string) => {
+    if(token == "solana") {
+        return await priceSOL();
+    } else if(token == "bitcoin") {
+        return await priceBTC();
+    } else if(token == "sand") {
+        return await priceSAND();
+    } else if(token == "ethereum") {
+        return await priceETH();
+    } else if(token == "link") {
+        return await priceLINK();
+    } else if(token == "matic") {
+        return await priceMATIC();
+    } else {
+        return 0;
+    }
+}

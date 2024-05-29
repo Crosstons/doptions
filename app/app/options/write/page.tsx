@@ -22,7 +22,7 @@ const tokens = [
 export default function TokenCards() {
   return (
     <>
-    <h1 className="mt-36 text-3xl px-4 md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sanss max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto -mb-16">Select Token</h1>
+    <h1 className="mt-36 text-2xl px-4 md:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sanss max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto -mb-16">Select Token</h1>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8"> {/* Increased spacing between cards */}
       {tokens.map(token => (
         <CardContainer key={token.id} className="inter-var">
@@ -45,7 +45,7 @@ export default function TokenCards() {
             <div className="flex justify-center mt-4"> {/* Centered the button and removed the link */}
               <CardItem
                 as={Link}
-                href={`/options/write/${token.name.toUpperCase()}`}
+                href={`/options/write/${token.name.toLowerCase()}`}
                 translateZ={20}
                 className="px-6 py-2 rounded-xl bg-red-500 text-white text-sm font-bold" // Changed to red button
               >
