@@ -21,8 +21,18 @@ contract TokenScript is Script {
         address account = vm.addr(privateKey);
 
         vm.startBroadcast(privateKey);
-        Token token = new Token("AMOY USDT", "aUSDT");
+        Token token = new Token("zkSync USDT", "sUSDT");
         token.mint(account, 100e18);
+
+        Token token2 = new Token("zkSync BTC", "sBTC");
+        token2.mint(account, 10e18);
+
+        Token token3 = new Token("zkSync ETH", "sETH");
+        token3.mint(account, 10e18);
+
+        Token token4 = new Token("zkSync LINK", "sLINK");
+        token4.mint(account, 10e18);
+
         vm.stopBroadcast();
     }
 }
