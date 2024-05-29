@@ -10,7 +10,9 @@ const Page = () => {
 
     const { address, chainId, isConnected } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
-
+    const [chain, setChain] = useState(80002);
+    const [loading, setLoading] = useState(false);
+ 
     const [optionsData, setOptionsData] = useState<{ calls: OptionData[], puts: OptionData[] }>({
         calls: [],
         puts: []
@@ -20,14 +22,16 @@ const Page = () => {
         if (isConnected && walletProvider) {
           (async () => {
             try {
-              const data = await getOptions(walletProvider);
+              setLoading(true);
+              const data = await getOptions(walletProvider, chainId);
               setOptionsData(data);
+              setLoading(false);
             } catch (error) {
               console.error(error);
             }
           })();
         }
-      }, [isConnected, walletProvider]);
+      }, [isConnected, walletProvider, chainId]);
 
     return (
         <div className="flex flex-row h-screen bg-black text-white pt-32">

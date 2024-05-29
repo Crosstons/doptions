@@ -3,7 +3,8 @@ import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { callOptionABI } from '@/web3/CallOptionABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
 
-const factoryAddress = '0x4633BFBb343F131deF95ac1fd518Ed4495092063'
+const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
+const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
 
 const addressTokenMapping : { [key : string] : string } = {
     "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7": "BTC",
@@ -32,9 +33,18 @@ const formatTimestamp = (timestamp: bigint): string => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export const getOptions = async (walletProvider : any) => {
+export const getOptions = async (walletProvider : any, chainId : any) => {
+    console.log(chainId);
 //    if (!isConnected) throw Error('User disconnected')
     if (!walletProvider) throw new Error('No wallet provider found')
+    
+    let factoryAddress : string;
+
+    if(chainId == 80002) {
+        factoryAddress = amoyFactory;
+    } else {
+        factoryAddress = scrollSepFactory;
+    }
 
     const ethersProvider = new BrowserProvider(walletProvider)
     const signer = await ethersProvider.getSigner()
