@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { getOptions, OptionData } from './interactions';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { BackgroundBeams } from '@/components/ui/background-beams';
+import Button2 from '@/components/Button2';
 
 const Page = () => {
 
@@ -34,7 +35,7 @@ const Page = () => {
       }, [isConnected, walletProvider, chainId]);
 
     return (
-        <div className="flex flex-row h-screen bg-black text-white pt-32">
+        <div className="flex flex-row h-screen bg-black bg-dot-white/[0.2] text-white pt-32">
       {/* Call Options Side */}
       <div className="w-1/2 overflow-hidden p-4">
         <h2 className="text-2xl font-bold mb-4 text-green-500 w-full text-center"></h2>
@@ -52,6 +53,7 @@ const Page = () => {
                 <th scope="col" className="px-6 py-3">Premium</th>
                 <th scope="col" className="px-6 py-3">Expiration</th>
                 <th scope="col" className="px-6 py-3">Quantity</th>
+                <th scope="col" className="px-6 py-3"></th>
             </tr>
         </thead>
         <tbody>
@@ -62,6 +64,8 @@ const Page = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                  <td className="px-6 py-4 text-sm"><Button2 /></td>
+                
                 </tr>
               ))}
         </tbody>
@@ -88,6 +92,7 @@ const Page = () => {
                 <th scope="col" className="px-6 py-3">Premium</th>
                 <th scope="col" className="px-6 py-3">Expiration</th>
                 <th scope="col" className="px-6 py-3">Quantity</th>
+                <th scope="col" className="px-6 py-3"></th>
             </tr>
         </thead>
         <tbody>
@@ -98,6 +103,9 @@ const Page = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
+                  <td className="px-6 py-4 text-sm">
+                  <Button2/>
+                  </td>
                 </tr>
               ))}
         </tbody>

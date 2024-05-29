@@ -38,3 +38,20 @@ contract NewFactoryAmoy is Script {
         vm.stopBroadcast();
     }
 }
+
+contract NewFactoryCardona is Script {
+    function setUp() public {}
+
+    function run() public {
+        uint privateKey = vm.envUint("DEV_PRIVATE_KEY");
+
+        vm.startBroadcast(privateKey);
+
+        OptionsFactory factory = new OptionsFactory(0x7A9294c8305F9ee1d245E0f0848E00B1149818C7);
+        factory.setPriceOracle(0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841, 0xa24A68DD788e1D7eb4CA517765CFb2b7e217e7a3);
+        factory.setPriceOracle(0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E, 0xd94522a6feF7779f672f4C88eb672da9222f2eAc);
+        factory.setPriceOracle(0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b, 0x1AdDb2368414B3b4cF1BCe7A887d2De7Bfb6886f);
+
+        vm.stopBroadcast();
+    }
+}
