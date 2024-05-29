@@ -21,6 +21,12 @@ const OptionForm: React.FC<Props> = ({ params }) => {
   const [quantity, setQuantity] = useState('');
   const [livePrice, setLivePrice] = useState(0);
 
+  const ticker : { [key : string] : string } = {
+    "bitcoin" : "BTC",
+    "ethereum" : "ETH",
+    "link" : "LINK"
+  };
+
   useEffect(() => {
     (async () => {
       const _price : any = await priceMulti(params.token.toLowerCase());
@@ -65,7 +71,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
   return (
     <div className="bg-black bg-dot-white/[0.2] p-6 min-h-screen">
       <div className="max-w-xl mx-auto mt-32">
-      <h1 className="mt-36 text-2xl px-4 md:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto mb-4">{params.token.toUpperCase()} Price: ${livePrice}</h1>
+      <h1 className="mt-36 text-2xl px-4 md:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto mb-4">{ticker[params.token.toLowerCase()]} Price: ${livePrice.toString().substring(0, livePrice.toString().length - 2)}</h1>
         <div className="mb-4">
           <ul className="flex">
             <li className="flex-1 mr-2">

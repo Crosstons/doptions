@@ -11,7 +11,7 @@ function Button2() {
     <span>
       Buy
     </span>
-    <svg
+    {/* <svg
       fill="none"
       height="16"
       viewBox="0 0 24 24"
@@ -25,7 +25,7 @@ function Button2() {
         strokeLinejoin="round"
         strokeWidth="1.5"
       />
-    </svg>
+    </svg> */}
   </div>
   <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
 </button>

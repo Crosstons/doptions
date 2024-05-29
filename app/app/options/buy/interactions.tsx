@@ -5,8 +5,9 @@ import { putOptionABI } from '@/web3/PutOptionABI';
 
 const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
 const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
+const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
 
-const addressTokenMapping : { [key : string] : string } = {
+const amoyTokenMapping : { [key : string] : string } = {
     "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7": "BTC",
     "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "ETH",
     "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1": "LINK",
@@ -15,7 +16,20 @@ const addressTokenMapping : { [key : string] : string } = {
     "0xAB5aBA3B6ABB3CdaF5F2176A693B3C012663B6c3": "SAND"
 }
 
+const cardonaTokenMapping : { [key : string] : string } = {
+    "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "BTC",
+    "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E": "ETH",
+    "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
+}
+
+const scrollSepTokenMapping : { [key : string] : string } = {
+    "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "BTC",
+    "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E": "ETH",
+    "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
+}
+
 export interface OptionData {
+    tokenAddr: string;
     tokenImg: string;
     strikePrice: string;
     premium: string;
@@ -39,11 +53,17 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
     if (!walletProvider) throw new Error('No wallet provider found')
     
     let factoryAddress : string;
+    let addressTokenMapping : { [key : string] : string };
 
     if(chainId == 80002) {
         factoryAddress = amoyFactory;
+        addressTokenMapping = amoyTokenMapping;
+    } else if(chainId == 2442) {
+        factoryAddress = cardonaFactory;
+        addressTokenMapping = cardonaTokenMapping;
     } else {
         factoryAddress = scrollSepFactory;
+        addressTokenMapping = scrollSepTokenMapping;
     }
 
     const ethersProvider = new BrowserProvider(walletProvider)
@@ -72,7 +92,7 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
             _expiration = formatTimestamp(_expiration)
             let _quantity = await _callContract.quantity()
             _quantity = formatUnits(_quantity, 18)
-            data.calls.push({tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
+            data.calls.push({tokenAddr: callOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
         }
     }
 
@@ -90,7 +110,7 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
             _expiration = formatTimestamp(_expiration)
             let _quantity = await _putContract.quantity()
             _quantity = formatUnits(_quantity, 18)
-            data.puts.push({tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
+            data.puts.push({tokenAddr: putOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
         }
     }
 

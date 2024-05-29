@@ -20,6 +20,7 @@ export default function TokenCards() {
       <div className="flex justify-center items-center p-8">
         <div className="grid grid-cols-3 gap-8 w-full max-w-7xl mx-auto"> {/* Adjusted container width and alignment */}
           {tokens.map(token => (
+            <Link href={`/options/write/${token.name.toLowerCase()}`}>
             <CardContainer key={token.id} className="inter-var flex flex-col items-center">
               <CardBody className="group dark:hover:shadow-2xl hover:shadow-emerald-500/[0.1] bg-black border-white/[0.2] w-full sm:w-[22rem] h-auto rounded-xl p-6 border text-center">
                 <CardItem
@@ -37,7 +38,7 @@ export default function TokenCards() {
                     alt={token.name}
                   />
                 </CardItem>
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <CardItem
                     as={Link}
                     href={`/options/write/${token.name.toLowerCase()}`}
@@ -46,9 +47,10 @@ export default function TokenCards() {
                   >
                     Write
                   </CardItem>
-                </div>
+                </div> */}
               </CardBody>
             </CardContainer>
+            </Link>
           ))}
         </div>
       </div>
