@@ -41,7 +41,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
         setLoading(false);
       }
     })();
-  }, [isConnected, walletProvider, params.token]);
+  }, [isConnected, walletProvider, chainId, params.token]);
 
   const tabClass = (tab: 'call' | 'put') => (
     `${activeTab === tab ? 'text-white' : 'text-gray-400'} 
@@ -77,7 +77,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
       };
 
       console.log('Form Data:', formData);
-      await createOptionCall(formData, walletProvider);
+      await createOptionCall(formData, walletProvider, chainId);
     } catch (error) {
       console.log(e)
     } finally {

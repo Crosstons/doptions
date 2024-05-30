@@ -8,7 +8,7 @@ const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
 const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
 const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
 
-const usdtMapping : { [key : number] : string } = {
+export const usdtMapping : { [key : number] : string } = {
     80002 : "0xB1b104D79dE24513338bdB6CB9Df468110010E5F",
     2442 : "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
     534351 : "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1"
