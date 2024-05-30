@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getOptions, OptionData } from './interactions';
+import { getOptions, onBuy, OptionData } from './interactions';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
-import { BackgroundBeams } from '@/components/ui/background-beams';
 import Button2 from '@/components/Button2';
-import LoadingScreen from "@/components/LoadingScreen";  // Import the LoadingScreen component
+import LoadingScreen from "@/components/LoadingScreen";
 
 const Page = () => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
@@ -20,18 +19,27 @@ const Page = () => {
   useEffect(() => {
     if (isConnected && walletProvider) {
       (async () => {
-        try {
-          setLoading(true);
-          const data = await getOptions(walletProvider, chainId);
-          setOptionsData(data);
-          setLoading(false);
-        } catch (error) {
-          console.error(error);
-          setLoading(false);
-        }
+        await fetchOptions();
       })();
     }
   }, [isConnected, walletProvider, chainId]);
+
+  const fetchOptions = async () => {
+    try {
+      setLoading(true);
+      const data = await getOptions(walletProvider, chainId);
+      setOptionsData(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  }
+
+  const onBuyClick = async (addr : string, call : boolean) => {
+    await onBuy(walletProvider, chainId, addr, call);
+    await fetchOptions();
+  }
 
   return (
     <div className="flex flex-row h-screen bg-black bg-dot-white/[0.2] text-white pt-32">
@@ -66,7 +74,7 @@ const Page = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">${option.premium}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
-                        <td className="px-6 py-4 text-sm"><Button2 /></td>
+                        <td className="px-6 py-4 text-sm"><button onClick={() => onBuyClick(option.contractAddr, true)}><Button2 /></button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -104,7 +112,7 @@ const Page = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.expirationDate}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{option.quantity}</td>
                         <td className="px-6 py-4 text-sm">
-                          <Button2 />
+                          <button onClick={() => onBuyClick(option.contractAddr, false)}><Button2 /></button>
                         </td>
                       </tr>
                     ))}

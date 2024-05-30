@@ -2,10 +2,17 @@ import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { callOptionABI } from '@/web3/CallOptionABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
+import { erc20ABI } from '@/web3/ERC20ABI';
 
 const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
 const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
 const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
+
+const usdtMapping : { [key : number] : string } = {
+    80002 : "0xB1b104D79dE24513338bdB6CB9Df468110010E5F",
+    2442 : "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
+    534351 : "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1"
+}
 
 const amoyTokenMapping : { [key : string] : string } = {
     "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7": "BTC",
@@ -29,7 +36,7 @@ const scrollSepTokenMapping : { [key : string] : string } = {
 }
 
 export interface OptionData {
-    tokenAddr: string;
+    contractAddr: string;
     tokenImg: string;
     strikePrice: string;
     premium: string;
@@ -92,7 +99,7 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
             _expiration = formatTimestamp(_expiration)
             let _quantity = await _callContract.quantity()
             _quantity = formatUnits(_quantity, 18)
-            data.calls.push({tokenAddr: callOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
+            data.calls.push({contractAddr: callOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
         }
     }
 
@@ -110,9 +117,41 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
             _expiration = formatTimestamp(_expiration)
             let _quantity = await _putContract.quantity()
             _quantity = formatUnits(_quantity, 18)
-            data.puts.push({tokenAddr: putOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
+            data.puts.push({contractAddr: putOptions[i], tokenImg: addressTokenMapping[_asset], strikePrice: _strikePrice, premium: _premium, expirationDate: _expiration, quantity: _quantity})
         }
     }
 
     return data
 }
+
+export const onBuy = async (walletProvider : any, chainId : any, optionAddr : string, call : boolean) => {
+    try {
+        if (!walletProvider) throw new Error('No wallet provider found');
+
+        const ethersProvider = new BrowserProvider(walletProvider)
+        const signer = await ethersProvider.getSigner()
+
+        let optionContract : Contract;
+        if(call) {
+            optionContract = new Contract(optionAddr, callOptionABI, signer);
+        } else {
+            optionContract = new Contract(optionAddr, putOptionABI, signer);
+        }
+
+        let _premium = await optionContract.premium()
+        
+        const usdtContract = new Contract(usdtMapping[chainId], erc20ABI, signer);
+
+        const _approve = await usdtContract.approve(optionAddr, _premium);
+        console.log(_approve);
+        await _approve.wait();
+
+        const _buy = await optionContract.buy();
+        console.log(_buy);
+        await _buy.wait();
+        alert("Option Bought Successfully!");
+    } catch (error) {
+        console.log(error);
+        alert("Error, check console for details");
+    }
+  }

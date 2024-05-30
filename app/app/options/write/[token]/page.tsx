@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { createOptionCall } from './interactions';
 import { priceMulti } from '@/web3/Prices';
-import LoadingScreen from '@/components/LoadingScreen2';
+import LoadingScreen from '@/components/LoadingScreen';
 
 type Props = {
   params: {
