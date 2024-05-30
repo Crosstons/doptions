@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { createOptionCall } from './interactions';
 import { priceMulti } from '@/web3/Prices';
+import LoadingScreen from '@/components/LoadingScreen2';
 
 type Props = {
   params: {
@@ -20,6 +21,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
   const [expiration, setExpiration] = useState('');
   const [quantity, setQuantity] = useState('');
   const [livePrice, setLivePrice] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const ticker : { [key : string] : string } = {
     "bitcoin" : "BTC",
@@ -29,8 +31,15 @@ const OptionForm: React.FC<Props> = ({ params }) => {
 
   useEffect(() => {
     (async () => {
-      const _price : any = await priceMulti(params.token.toLowerCase());
-      setLivePrice(_price);
+      setLoading(true);
+      try {
+        const _price: any = await priceMulti(params.token.toLowerCase());
+        setLivePrice(_price);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, [isConnected, walletProvider, params.token]);
 
@@ -45,31 +54,41 @@ const OptionForm: React.FC<Props> = ({ params }) => {
     return unixTimestamp;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!strikePrice || !premium || !expiration || !quantity) {
-      alert('All fields are required.');
-      return;
+    setLoading(true);
+    try{
+      if (!strikePrice || !premium || !expiration || !quantity) {
+        alert('All fields are required.');
+        setLoading(false);
+        return;
+      }
+
+      let unixExpiration = convertToUnixTimestamp(expiration);
+      let strike = Math.ceil(Number(strikePrice) * 10**8);
+
+      const formData = {
+        type: activeTab.toUpperCase(),
+        token: params.token,
+        strike,
+        premium,
+        unixExpiration,
+        quantity
+      };
+
+      console.log('Form Data:', formData);
+      await createOptionCall(formData, walletProvider);
+    } catch (error) {
+      console.log(e)
+    } finally {
+      setLoading(false);
     }
-
-    let unixExpiration = convertToUnixTimestamp(expiration);
-    let strike = Math.ceil(Number(strikePrice) * 10**8);
-
-    const formData = {
-      type: activeTab.toUpperCase(),
-      token: params.token,
-      strike,
-      premium,
-      unixExpiration,
-      quantity
-    };
-
-    console.log('Form Data:', formData);
-    createOptionCall(formData, walletProvider);
   };
 
   return (
     <div className="bg-black bg-dot-white/[0.2] p-6 min-h-screen">
+      {loading && <LoadingScreen />}
+      {!loading && (
       <div className="max-w-xl mx-auto mt-32">
       <h1 className="mt-36 text-2xl px-4 md:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto mb-4">{ticker[params.token.toLowerCase()]} Price: ${livePrice.toString().substring(0, livePrice.toString().length - 2)}</h1>
         <div className="mb-4">
@@ -147,6 +166,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
         </button>
       </form>
       </div>
+      )}
     </div>
   );
 };

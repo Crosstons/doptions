@@ -56,7 +56,7 @@ export const createOptionCall = async (formData : any, walletProvider : any) => 
 
         let _strikeValue = await putContract.strikeValue();
         
-        const _approve = await assetContract.approve(callOptions[callOptions.length-1], parseEther(_strikeValue));
+        const _approve = await assetContract.approve(callOptions[callOptions.length-1], _strikeValue);
         console.log(_approve);
         await _approve.wait();
 
