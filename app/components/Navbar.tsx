@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "../components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
+import Button3 from "./Button3";
 
 export default function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
@@ -18,6 +19,7 @@ export default function Navbar({ className }: { className?: string }) {
         <MenuItem setActive={setActive} active={active} item="Options"></MenuItem>
         </Link>
           <w3m-button /> 
+          <Button3 />
       </Menu>
     </nav>
   );
