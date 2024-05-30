@@ -18,8 +18,11 @@ export default function Navbar({ className }: { className?: string }) {
         <Link href="/options">
         <MenuItem setActive={setActive} active={active} item="Options"></MenuItem>
         </Link>
+        <Link href="/positions">
+        <MenuItem setActive={setActive} active={active} item="Positions"></MenuItem>
+        </Link>
           <w3m-button /> 
-          <Button3 />
+          {/* <Button3 /> */}
       </Menu>
     </nav>
   );

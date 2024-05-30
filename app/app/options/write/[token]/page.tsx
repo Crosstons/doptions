@@ -41,7 +41,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
         setLoading(false);
       }
     })();
-  }, [isConnected, walletProvider, chainId, params.token]);
+  }, [isConnected, walletProvider, chainId, params.token, address]);
 
   const tabClass = (tab: 'call' | 'put') => (
     `${activeTab === tab ? 'text-white' : 'text-gray-400'} 

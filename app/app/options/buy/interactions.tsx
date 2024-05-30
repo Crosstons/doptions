@@ -4,9 +4,9 @@ import { callOptionABI } from '@/web3/CallOptionABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
 
-const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
-const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
-const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
+export const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
+export const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
+export const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
 
 export const usdtMapping : { [key : number] : string } = {
     80002 : "0xB1b104D79dE24513338bdB6CB9Df468110010E5F",
@@ -14,7 +14,7 @@ export const usdtMapping : { [key : number] : string } = {
     534351 : "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1"
 }
 
-const amoyTokenMapping : { [key : string] : string } = {
+export const amoyTokenMapping : { [key : string] : string } = {
     "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7": "BTC",
     "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "ETH",
     "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1": "LINK",
@@ -23,13 +23,13 @@ const amoyTokenMapping : { [key : string] : string } = {
     "0xAB5aBA3B6ABB3CdaF5F2176A693B3C012663B6c3": "SAND"
 }
 
-const cardonaTokenMapping : { [key : string] : string } = {
+export const cardonaTokenMapping : { [key : string] : string } = {
     "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "BTC",
     "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E": "ETH",
     "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
 }
 
-const scrollSepTokenMapping : { [key : string] : string } = {
+export const scrollSepTokenMapping : { [key : string] : string } = {
     "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "BTC",
     "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E": "ETH",
     "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
@@ -44,7 +44,7 @@ export interface OptionData {
     quantity: string;
 }
 
-const formatTimestamp = (timestamp: bigint): string => {
+export const formatTimestamp = (timestamp: bigint): string => {
     const date = new Date(Number(timestamp) * 1000);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -54,7 +54,7 @@ const formatTimestamp = (timestamp: bigint): string => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export const getOptions = async (walletProvider : any, chainId : any) => {
+export const getOptions = async (address : any, walletProvider : any, chainId : any) => {
     console.log(chainId);
 //    if (!isConnected) throw Error('User disconnected')
     if (!walletProvider) throw new Error('No wallet provider found')
@@ -89,7 +89,8 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
         const _callContract = new Contract(callOptions[i], callOptionABI, signer)
         const _bought = await _callContract.bought()
         const _inited = await _callContract.inited()
-        if(_inited && !_bought) { 
+        const _creator = await _callContract.creator()
+        if(_inited && !_bought && _creator != address) { 
             const _asset = await _callContract.asset()
             let _strikePrice = await _callContract.strikePrice()
             _strikePrice = formatUnits(_strikePrice, 8)
@@ -107,7 +108,8 @@ export const getOptions = async (walletProvider : any, chainId : any) => {
         const _putContract = new Contract(putOptions[i], putOptionABI, signer)
         const _bought = await _putContract.bought()
         const _inited = await _putContract.inited()
-        if(_inited && !_bought) { 
+        const _creator = await _putContract.creator()
+        if(_inited && !_bought && _creator != address) { 
             const _asset = await _putContract.asset()
             let _strikePrice = await _putContract.strikePrice()
             _strikePrice = formatUnits(_strikePrice, 8)

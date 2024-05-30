@@ -22,12 +22,12 @@ const Page = () => {
         await fetchOptions();
       })();
     }
-  }, [isConnected, walletProvider, chainId]);
+  }, [isConnected, walletProvider, chainId, address]);
 
   const fetchOptions = async () => {
     try {
       setLoading(true);
-      const data = await getOptions(walletProvider, chainId);
+      const data = await getOptions(address, walletProvider, chainId);
       setOptionsData(data);
       setLoading(false);
     } catch (error) {
@@ -37,7 +37,9 @@ const Page = () => {
   }
 
   const onBuyClick = async (addr : string, call : boolean) => {
+    setLoading(true);
     await onBuy(walletProvider, chainId, addr, call);
+    setLoading(false);
     await fetchOptions();
   }
 
