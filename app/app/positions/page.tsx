@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react';
 import { getPositions, executeOption, withdrawOption, PositionData } from './interactions';
 import LoadingScreen from "@/components/LoadingScreen";
+import { BackgroundGradient } from '@/components/ui/background-gradient';
 
 const PositionsPage = () => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
@@ -42,22 +43,30 @@ const PositionsPage = () => {
   }
 
   const renderPosition = (position: PositionData) => (
-    <div className="bg-gray-800 p-4 my-2 rounded-lg text-white shadow-md">
-      <div className="text-lg font-semibold">
-        <span>{position.tokenName}</span> <span>{position.strikePrice}</span> <span>{position.type}</span>
-      </div>
+    <div className="my-8">
+      <BackgroundGradient>
+    <div className="bg-gray-900 p-6 rounded-md text-white shadow-md">
+    <div className="text-xl font-semibold">
+      <span>{position.tokenName}</span> {' '}
+      <span>${position.strikePrice}</span> {' '}
+      {position.type === 'CALL' ? (
+        <span className='ml-2 px-2 py-2 rounded-md bg-gray-800 border-[0.5px] text-green-400 border-green-200 text-sm'>{position.type}</span>
+      ) : (
+        <span className='ml-2 px-4 py-2 rounded-md bg-gray-800 border-[0.5px] text-red-400 text-sm border-red-200 '>{position.type}</span>
+      )}
+    </div>
       <div className="flex justify-between items-center mt-2">
         <div>
-          <div>Quantity: {position.quantity}</div>
-          <div>Expires on: {position.expiration}</div>
+          <div className='text-gray-300'>Quantity: {position.quantity}</div>
+          <div className='text-gray-300'>Expires on: {position.expiration}</div>
         </div>
-        <div>
-          Premium Paid: ${position.premiumPaid}
+        <div className='px-4 py-2 rounded-md bg-gray-800 text-lg'>
+          P ${position.premiumPaid}
         </div>
       </div>
       <div className="mt-2">
         {position.positionType === 'Bought' ? (
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => onExecuteClick(position.contractAddr, position.type === 'CALL')}>
+          <button className="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded" onClick={() => onExecuteClick(position.contractAddr, position.type === 'CALL')}>
             Execute
           </button>
         ) : (
@@ -67,10 +76,12 @@ const PositionsPage = () => {
         )}
       </div>
     </div>
+    </BackgroundGradient>
+    </div>
   );
 
   return (
-    <div className="p-4 md:p-8 bg-black min-h-full mt-32">
+    <div className="p-4 md:p-8 bg-black min-h-full mt-32 m-8">
       {loading && <LoadingScreen />}  {/* Conditionally render the loading screen */}
       {!loading && (
         <>
