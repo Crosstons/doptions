@@ -48,7 +48,7 @@ export default function Navbar({ className }: { className?: string }) {
         </Link>
           <w3m-button />
           <button onClick={onFaucet}>
-          <Button3 text={loading ? "Loading..." : "Faucet"} />
+          <Button3 text={loading ? "Loading..." : "Token Faucet"} />
           </button>
       </Menu>
     </nav>

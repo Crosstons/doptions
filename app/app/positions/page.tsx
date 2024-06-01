@@ -37,8 +37,8 @@ const PositionsPage = () => {
     await fetchPositions();
   }
 
-  const onWithdrawClick = async (addr: string, call: boolean) => {
-    await withdrawOption(walletProvider, chainId, addr, call);
+  const onWithdrawClick = async (addr: string, call: boolean, bought: boolean) => {
+    await withdrawOption(walletProvider, chainId, addr, call, bought);
     await fetchPositions();
   }
 
@@ -59,9 +59,10 @@ const PositionsPage = () => {
         <div>
           <div className='text-gray-300'>Quantity: {position.quantity}</div>
           <div className='text-gray-300'>Expires on: {position.expiration}</div>
+          <div className='text-gray-300'>{position.positionType}</div>
         </div>
         <div className='px-4 py-2 rounded-md bg-gray-800 text-lg'>
-          P ${position.premiumPaid}
+          Premium ${position.premiumPaid}
         </div>
       </div>
       <div className="mt-2">
@@ -69,11 +70,12 @@ const PositionsPage = () => {
           <button className="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded" onClick={() => onExecuteClick(position.contractAddr, position.type === 'CALL')}>
             Execute
           </button>
-        ) : (
-          <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => onWithdrawClick(position.contractAddr, position.type === 'CALL')}>
+        ) : "" }
+        {activeTab == 'active' && position.positionType != 'Bought' ? (
+          <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => onWithdrawClick(position.contractAddr, position.type === 'CALL', position.bought)}>
             Withdraw
           </button>
-        )}
+        ) : ""}
       </div>
     </div>
     </BackgroundGradient>
