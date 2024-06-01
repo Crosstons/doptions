@@ -11,7 +11,8 @@ export const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
 export const usdtMapping : { [key : number] : string } = {
     80002 : "0xB1b104D79dE24513338bdB6CB9Df468110010E5F",
     2442 : "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
-    534351 : "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1"
+    534351 : "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1",
+    300 : "0xda3889268B05520fFe019B9A3de01a2872d8d82f"
 }
 
 export const amoyTokenMapping : { [key : string] : string } = {
@@ -33,6 +34,12 @@ export const scrollSepTokenMapping : { [key : string] : string } = {
     "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841": "BTC",
     "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E": "ETH",
     "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
+}
+
+export const zksyncTokenMapping : { [key : string] : string } = {
+    "0xAA5674C00D783EAEcbF4Ff0cB4F78fFD111b4068": "BTC",
+    "0x10265A988d97AfCf859B394c7e4ecd8ED8807c66": "ETH",
+    "0xe752A88e3d21C53Ea90b1B715b33131b372915aa": "LINK"
 }
 
 export interface OptionData {

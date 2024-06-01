@@ -22,6 +22,13 @@ const scrollSepTokens = [
     '0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E'
 ]
 
+const zkSyncTokens = [
+    '0xda3889268B05520fFe019B9A3de01a2872d8d82f',
+    '0xAA5674C00D783EAEcbF4Ff0cB4F78fFD111b4068',
+    '0x10265A988d97AfCf859B394c7e4ecd8ED8807c66',
+    '0xe752A88e3d21C53Ea90b1B715b33131b372915aa'
+]
+
 export const getTokens = async (address : any, walletProvider: any, chainId: any) => {
     if (!walletProvider) throw new Error('No wallet provider found');
 
@@ -30,8 +37,13 @@ export const getTokens = async (address : any, walletProvider: any, chainId: any
         tokenArray = amoyTokens;
     } else if(chainId == 2442) {
         tokenArray = cardonaTokens;
-    } else {
+    } else if(chainId == 300) {
+        tokenArray = zkSyncTokens;
+    } else if(chainId == 534351){
         tokenArray = scrollSepTokens;
+    } else {
+        alert("This network is not supported!")
+        return "Invalid Network"
     }
 
     const ethersProvider = new BrowserProvider(walletProvider);

@@ -114,32 +114,47 @@ export const getPositions = async (address : any, walletProvider: any, chainId: 
   };
 };
 
-export const executeOption = async (walletProvider: any, chainId: any, optionAddr: string, call: boolean): Promise<void> => {
+export const executeOption = async (walletProvider: any, chainId: any, optionAddr: string, call: boolean, type: 'CALL' | 'PUT'): Promise<void> => {
   if (!walletProvider) throw new Error('No wallet provider found');
 
   const ethersProvider = new BrowserProvider(walletProvider);
   const signer = await ethersProvider.getSigner();
   
   const optionContract = new Contract(optionAddr, call ? callOptionABI : putOptionABI, signer);
-  const usdtContract = new Contract(usdtMapping[chainId], erc20ABI, signer);
-  
-  // Execute the option
+
+  if(type == 'CALL') {
+    const _value = await optionContract.strikeValue();
+    const usdtContract = new Contract(usdtMapping[chainId], erc20ABI, signer);
+    const _approve = await usdtContract.approve(optionAddr, _value);
+    await _approve.wait();
+  } else {
+    const _asset = await optionContract.asset();
+    const _value = await optionContract.strikeValue();
+    const assetContract = new Contract(_asset, erc20ABI, signer);
+    const _approve = await assetContract.approve(optionAddr, _value);
+    await _approve.wait();
+  }
+
   const tx = await optionContract.execute();
   await tx.wait();
   alert("Option executed successfully!");
 };
 
-export const withdrawOption = async (walletProvider: any, chainId: any, optionAddr: string, call: boolean): Promise<void> => {
+export const withdrawOption = async (walletProvider: any, chainId: any, optionAddr: string, call: boolean, bought: boolean): Promise<void> => {
   if (!walletProvider) throw new Error('No wallet provider found');
 
   const ethersProvider = new BrowserProvider(walletProvider);
   const signer = await ethersProvider.getSigner();
   
   const optionContract = new Contract(optionAddr, call ? callOptionABI : putOptionABI, signer);
-  const usdtContract = new Contract(usdtMapping[chainId], erc20ABI, signer);
-  
-  // Withdraw the option
-  const tx = await optionContract.withdraw();
-  await tx.wait();
+
+  if(bought == true) {
+    const tx = await optionContract.cancel();
+    await tx.wait();
+  } else {
+    const tx = await optionContract.withdraw();
+    await tx.wait();
+  }
+
   alert("Option withdrawn successfully!");
 };
