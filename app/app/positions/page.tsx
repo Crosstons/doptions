@@ -24,13 +24,19 @@ const PositionsPage = () => {
     try {
       setLoading(true);
       const data = await getPositions(address, walletProvider, chainId);
-      setPositionsData(data);
+      if (typeof data === 'string') {
+        console.error(data); // Log the error message
+        // Handle the invalid network case appropriately here
+      } else {
+        setPositionsData(data);
+      }
       setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   }
+  
 
   const onExecuteClick = async (addr: string, call: boolean) => {
     await executeOption(walletProvider, chainId, addr, call);
