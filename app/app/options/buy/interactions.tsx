@@ -7,6 +7,7 @@ import { erc20ABI } from '@/web3/ERC20ABI';
 export const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
 export const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
 export const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
+export const zkSyncFactory = '0x1E89E5ccFcd37e244d02B656085844E399B1967C';
 
 export const usdtMapping : { [key : number] : string } = {
     80002 : "0xB1b104D79dE24513338bdB6CB9Df468110010E5F",
@@ -36,7 +37,7 @@ export const scrollSepTokenMapping : { [key : string] : string } = {
     "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b": "LINK"
 }
 
-export const zksyncTokenMapping : { [key : string] : string } = {
+export const zkSyncTokenMapping : { [key : string] : string } = {
     "0xAA5674C00D783EAEcbF4Ff0cB4F78fFD111b4068": "BTC",
     "0x10265A988d97AfCf859B394c7e4ecd8ED8807c66": "ETH",
     "0xe752A88e3d21C53Ea90b1B715b33131b372915aa": "LINK"
@@ -75,9 +76,15 @@ export const getOptions = async (address : any, walletProvider : any, chainId : 
     } else if(chainId == 2442) {
         factoryAddress = cardonaFactory;
         addressTokenMapping = cardonaTokenMapping;
-    } else {
+    } else if(chainId == 300) {
+        factoryAddress = zkSyncFactory;
+        addressTokenMapping = zkSyncTokenMapping;
+    } else if(chainId == 534351){
         factoryAddress = scrollSepFactory;
         addressTokenMapping = scrollSepTokenMapping;
+    } else {
+        alert("This network is not supported!")
+        return "Invalid Network"
     }
 
     const ethersProvider = new BrowserProvider(walletProvider)

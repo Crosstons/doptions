@@ -8,6 +8,7 @@ import { usdtMapping } from '../../buy/interactions';
 const amoyFactory = '0x4633BFBb343F131deF95ac1fd518Ed4495092063';
 const scrollSepFactory = '0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD';
 const cardonaFactory = '0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1';
+const zkSyncFactory = '0x1E89E5ccFcd37e244d02B656085844E399B1967C';
 
 const amoyTokenMapping : { [key : string] : string } = {
     "bitcoin" : "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
@@ -30,6 +31,12 @@ const scrollSepTokenMapping : { [key : string] : string } = {
     "link" : "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b",
 }
 
+const zkSyncTokenMapping : { [key : string] : string } = {
+    "bitcoin" : "0xAA5674C00D783EAEcbF4Ff0cB4F78fFD111b4068",
+    "ethereum" : "0x10265A988d97AfCf859B394c7e4ecd8ED8807c66",
+    "link" : "0xe752A88e3d21C53Ea90b1B715b33131b372915aa",
+}
+
 export const createOptionCall = async (formData : any, walletProvider : any, chainId : any) => {
     if (!walletProvider) throw new Error('No wallet provider found');
 
@@ -45,9 +52,15 @@ export const createOptionCall = async (formData : any, walletProvider : any, cha
     } else if(chainId == 2442) {
         factoryAddress = cardonaFactory;
         addressTokenMapping = cardonaTokenMapping;
-    } else {
+    } else if(chainId == 300) {
+        factoryAddress = zkSyncFactory;
+        addressTokenMapping = zkSyncTokenMapping;
+    } else if(chainId == 534351){
         factoryAddress = scrollSepFactory;
         addressTokenMapping = scrollSepTokenMapping;
+    } else {
+        alert("This network is not supported!")
+        return "Invalid Network"
     }
 
     const factoryContract = new Contract(factoryAddress, optionFactoryABI, signer);

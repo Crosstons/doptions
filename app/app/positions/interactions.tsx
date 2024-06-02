@@ -3,7 +3,7 @@ import { callOptionABI } from '@/web3/CallOptionABI';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
-import { usdtMapping, amoyTokenMapping, cardonaTokenMapping, scrollSepTokenMapping, amoyFactory, cardonaFactory, scrollSepFactory, formatTimestamp } from '../options/buy/interactions';
+import { usdtMapping, amoyTokenMapping, cardonaTokenMapping, scrollSepTokenMapping, zkSyncTokenMapping, amoyFactory, cardonaFactory, scrollSepFactory, zkSyncFactory,formatTimestamp } from '../options/buy/interactions';
 
 export interface PositionData {
   contractAddr: string;
@@ -19,7 +19,7 @@ export interface PositionData {
   rawExpiration: number;
 }
 
-export const getPositions = async (address : any, walletProvider: any, chainId: any): Promise<{ active: PositionData[], closed: PositionData[] }> => {
+export const getPositions = async (address : any, walletProvider: any, chainId: any) => {
   if (!walletProvider) throw new Error('No wallet provider found');
 
   let factoryAddress : string;
@@ -31,9 +31,15 @@ export const getPositions = async (address : any, walletProvider: any, chainId: 
   } else if(chainId == 2442) {
     factoryAddress = cardonaFactory;
     addressTokenMapping = cardonaTokenMapping;
+  } else if(chainId == 300) {
+    factoryAddress = zkSyncFactory;
+    addressTokenMapping = zkSyncTokenMapping;
+  } else if(chainId == 534351){
+      factoryAddress = scrollSepFactory;
+      addressTokenMapping = scrollSepTokenMapping;
   } else {
-    factoryAddress = scrollSepFactory;
-    addressTokenMapping = scrollSepTokenMapping;
+      alert("This network is not supported!")
+      return "Invalid Network"
   }
   
   const ethersProvider = new BrowserProvider(walletProvider);

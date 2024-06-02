@@ -207,7 +207,7 @@ def get_valid_input(prompt, valid_range):
             print("Invalid input. Please enter a number.")
 
 def main():
-    assets = ["BTCUSD", "ETHUSD", "LINKUSD", "MATICUSD", "SOLUSD", "SANDUSD"]
+    assets = ["BTCUSD", "ETHUSD", "LINKUSD"]
     print("Select an asset:")
     for i, asset in enumerate(assets):
         print(f"{i + 1}. {asset}")
