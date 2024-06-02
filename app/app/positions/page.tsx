@@ -25,8 +25,7 @@ const PositionsPage = () => {
       setLoading(true);
       const data = await getPositions(address, walletProvider, chainId);
       if (typeof data === 'string') {
-        console.error(data); // Log the error message
-        // Handle the invalid network case appropriately here
+        console.error(data);
       } else {
         setPositionsData(data);
       }
