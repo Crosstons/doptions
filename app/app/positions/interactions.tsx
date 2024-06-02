@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract, formatUnits } from 'ethers';
+import { BrowserProvider, Contract, ethers, formatUnits } from 'ethers';
 import { callOptionABI } from '@/web3/CallOptionABI';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
@@ -25,6 +25,9 @@ export const getPositions = async (address : any, walletProvider: any, chainId: 
   let factoryAddress : string;
   let addressTokenMapping : { [key : string] : string };
 
+  let ethersProvider : any = new BrowserProvider(walletProvider);
+  const signer = await ethersProvider.getSigner();
+
   if(chainId == 80002) {
     factoryAddress = amoyFactory;
     addressTokenMapping = amoyTokenMapping;
@@ -32,6 +35,7 @@ export const getPositions = async (address : any, walletProvider: any, chainId: 
     factoryAddress = cardonaFactory;
     addressTokenMapping = cardonaTokenMapping;
   } else if(chainId == 300) {
+    ethersProvider = new ethers.JsonRpcProvider("https://zksync-sepolia.g.alchemy.com/v2/VK1Zi54iD3T464JW7XnIQzORp5GpWePg");
     factoryAddress = zkSyncFactory;
     addressTokenMapping = zkSyncTokenMapping;
   } else if(chainId == 534351){
@@ -41,9 +45,6 @@ export const getPositions = async (address : any, walletProvider: any, chainId: 
       alert("This network is not supported!")
       return "Invalid Network"
   }
-  
-  const ethersProvider = new BrowserProvider(walletProvider);
-  const signer = await ethersProvider.getSigner();
   
   const factoryContract = new Contract(factoryAddress, optionFactoryABI, signer)
   const callOptions = await factoryContract.getCallOptions()
@@ -156,7 +157,7 @@ export const withdrawOption = async (walletProvider: any, chainId: any, optionAd
   
   const optionContract = new Contract(optionAddr, call ? callOptionABI : putOptionABI, signer);
 
-  if(bought == true) {
+  if(bought == false) {
     const tx = await optionContract.cancel();
     await tx.wait();
   } else {

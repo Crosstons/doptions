@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract, parseEther } from 'ethers';
+import { BrowserProvider, Contract, ethers, parseEther } from 'ethers';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
@@ -43,7 +43,7 @@ export const createOptionCall = async (formData : any, walletProvider : any, cha
     let factoryAddress : string;
     let addressTokenMapping : { [key : string] : string };
 
-    const ethersProvider = new BrowserProvider(walletProvider);
+    let ethersProvider :any = new BrowserProvider(walletProvider);
     const signer = await ethersProvider.getSigner();
 
     if(chainId == 80002) {
@@ -53,6 +53,7 @@ export const createOptionCall = async (formData : any, walletProvider : any, cha
         factoryAddress = cardonaFactory;
         addressTokenMapping = cardonaTokenMapping;
     } else if(chainId == 300) {
+        ethersProvider = new ethers.JsonRpcProvider("https://zksync-sepolia.g.alchemy.com/v2/VK1Zi54iD3T464JW7XnIQzORp5GpWePg");
         factoryAddress = zkSyncFactory;
         addressTokenMapping = zkSyncTokenMapping;
     } else if(chainId == 534351){

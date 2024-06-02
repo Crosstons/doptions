@@ -27,7 +27,7 @@ const Page = () => {
   const fetchOptions = async () => {
     try {
       setLoading(true);
-      const data = await getOptions(address, walletProvider, chainId);
+      const data : any = await getOptions(address, walletProvider, chainId);
       setOptionsData(data);
       setLoading(false);
     } catch (error) {

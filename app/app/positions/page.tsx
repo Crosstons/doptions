@@ -23,7 +23,7 @@ const PositionsPage = () => {
   const fetchPositions = async () => {
     try {
       setLoading(true);
-      const data = await getPositions(address, walletProvider, chainId);
+      const data : any = await getPositions(address, walletProvider, chainId);
       setPositionsData(data);
       setLoading(false);
     } catch (error) {
