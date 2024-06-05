@@ -17,21 +17,15 @@ contract TokenScript is Script {
     function setUp() public {}
 
     function run() public {
-        uint privateKey = vm.envUint("DEV_PRIVATE_KEY");
+        uint256 privateKey = vm.envUint("DEV_PRIVATE_KEY");
         address account = vm.addr(privateKey);
 
         vm.startBroadcast(privateKey);
-        Token token = new Token("zkSync USDT", "sUSDT");
+        Token token = new Token("Linea USDT", "lUSDT");
         token.mint(account, 100e18);
 
-        Token token2 = new Token("zkSync BTC", "sBTC");
+        Token token2 = new Token("Linea BTC", "lBTC");
         token2.mint(account, 10e18);
-
-        Token token3 = new Token("zkSync ETH", "sETH");
-        token3.mint(account, 10e18);
-
-        Token token4 = new Token("zkSync LINK", "sLINK");
-        token4.mint(account, 10e18);
 
         vm.stopBroadcast();
     }

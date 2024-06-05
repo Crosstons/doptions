@@ -22,4 +22,6 @@ cLINK = 0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b
 
 optionFactoryCardona = 0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1
 
+lineaFactory = 0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b
+
 forge script script/OptionsFactory.s.sol:NewFactoryScrollSepolia --rpc-url $SCROLL_SEPOLIA_RPC_URL --broadcast --verify --etherscan-api-key $SCROLL_SCAN_API_KEY --verifier-url https://api-sepolia.scrollscan.com/api
