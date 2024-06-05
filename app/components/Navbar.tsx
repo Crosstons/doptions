@@ -24,7 +24,7 @@ export default function Navbar({ className }: { className?: string }) {
   const onFaucet = async () => {
     setLoading(true);
     try {
-      await getTokens(address, walletProvider, chainId);
+      await getTokens(address, walletProvider);
     } catch (err) {
       console.log(err);
     } finally {

@@ -10,8 +10,8 @@ from datetime import datetime, timedelta
 """
 PRIVATE_KEY = ""
 
-with open('automation/abi/chainlink.json', 'r') as abi_file:
-    chainlink_abi = json.load(abi_file)
+with open('automation/abi/dia.json', 'r') as abi_file:
+    dia_abi = json.load(abi_file)
 
 with open('automation/abi/factory.json', 'r') as abi_file:
     factory_abi = json.load(abi_file)
@@ -25,11 +25,11 @@ with open('automation/abi/putOption.json', 'r') as abi_file:
 with open('automation/abi/erc20.json', 'r') as abi_file:
     erc20_abi = json.load(abi_file)
 
-alchemy_url = "https://rpc-amoy.polygon.technology/"
-web3 = Web3(Web3.HTTPProvider(alchemy_url))
+rpc_url = "https://rpc.sepolia.linea.build/"
+web3 = Web3(Web3.HTTPProvider(rpc_url))
 
-FACTORY = "0x4633BFBb343F131deF95ac1fd518Ed4495092063"
-USDT = "0xB1b104D79dE24513338bdB6CB9Df468110010E5F"
+FACTORY = "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b"
+USDT = "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7"
 
 account = Account.from_key(PRIVATE_KEY)
 
@@ -37,31 +37,21 @@ web3.eth.default_account = account.address
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 token_address = {
-    "BTCUSD": "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7",
-    "ETHUSD": "0x3b5dAAE6d0a1B98EF8B2E6B65206c93c8cE55841",
-    "LINKUSD": "0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1",
-    "MATICUSD": "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b",
-    "SOLUSD": "0xc302BD52985e75C1f563a47f2b5dfC4e2b5C6C7E",
-    "SANDUSD": "0xAB5aBA3B6ABB3CdaF5F2176A693B3C012663B6c3"
+    "BTCUSD": "0x817BB339d55A0a66EA680EE849a931416b575Ff2",
 }
 
 def get_price(asset: str) -> float:
     asset_addresses = {
-        "BTCUSD": "0xe7656e23fE8077D438aEfbec2fAbDf2D8e070C4f",
-        "ETHUSD": "0xF0d50568e3A7e8259E16663972b11910F89BD8e7",
-        "LINKUSD": "0xc2e2848e28B9fE430Ab44F55a8437a33802a219C",
-        "MATICUSD": "0x001382149eBa3441043c1c66972b4772963f5D43",
-        "SOLUSD": "0xF8e2648F3F157D972198479D5C7f0D721657Af67",
-        "SANDUSD": "0xeA8C8E97681863FF3cbb685e3854461976EBd895"
+        "BTCUSD": "BTC/USD",
     }
     
-    addr = asset_addresses.get(asset)
-    if not addr:
+    _asset = asset_addresses.get(asset)
+    if not _asset:
         raise ValueError("Invalid asset")
     
-    contract = web3.eth.contract(address=addr, abi=chainlink_abi)
-    latestData = contract.functions.latestRoundData().call()
-    return latestData[1] / 10**8
+    contract = web3.eth.contract("0x533D3c1df8D238374065FB3341c34754e4BFCE8E", abi=dia_abi)
+    latestData = contract.functions.getValue(_asset).call()
+    return latestData[0] / 10**8
 
 def days_until_expiration(expiration_timestamp):
     current_time = datetime.now()
@@ -207,7 +197,7 @@ def get_valid_input(prompt, valid_range):
             print("Invalid input. Please enter a number.")
 
 def main():
-    assets = ["BTCUSD", "ETHUSD", "LINKUSD"]
+    assets = ["BTCUSD"]
     print("Select an asset:")
     for i, asset in enumerate(assets):
         print(f"{i + 1}. {asset}")
