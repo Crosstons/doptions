@@ -40,6 +40,11 @@ export const putOptionABI = [
 				"internalType": "address",
 				"name": "_priceOracle",
 				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_assetString",
+				"type": "string"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -66,6 +71,19 @@ export const putOptionABI = [
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "assetString",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -179,6 +197,19 @@ export const putOptionABI = [
 	},
 	{
 		"inputs": [],
+		"name": "oracle",
+		"outputs": [
+			{
+				"internalType": "contract IDIAOracleV2",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "premium",
 		"outputs": [
 			{
@@ -196,19 +227,6 @@ export const putOptionABI = [
 		"outputs": [
 			{
 				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "priceOracle",
-		"outputs": [
-			{
-				"internalType": "contract AggregatorV3Interface",
 				"name": "",
 				"type": "address"
 			}

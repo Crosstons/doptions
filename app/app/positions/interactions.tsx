@@ -3,7 +3,7 @@ import { callOptionABI } from '@/web3/CallOptionABI';
 import { optionFactoryABI } from '@/web3/OptionFactoryABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
-import { usdtMapping, amoyTokenMapping, cardonaTokenMapping, scrollSepTokenMapping, zkSyncTokenMapping, amoyFactory, cardonaFactory, scrollSepFactory, zkSyncFactory,formatTimestamp } from '../options/buy/interactions';
+import { addressTokenMapping, factoryAddress, usdtAddress, formatTimestamp } from '../options/buy/interactions';
 
 export interface PositionData {
   contractAddr: string;
@@ -22,30 +22,9 @@ export interface PositionData {
 export const getPositions = async (address : any, walletProvider: any, chainId: any) => {
   if (!walletProvider) throw new Error('No wallet provider found');
 
-  let factoryAddress : string;
-  let addressTokenMapping : { [key : string] : string };
-
   let ethersProvider : any = new BrowserProvider(walletProvider);
   const signer = await ethersProvider.getSigner();
 
-  if(chainId == 80002) {
-    factoryAddress = amoyFactory;
-    addressTokenMapping = amoyTokenMapping;
-  } else if(chainId == 2442) {
-    factoryAddress = cardonaFactory;
-    addressTokenMapping = cardonaTokenMapping;
-  } else if(chainId == 300) {
-    ethersProvider = new ethers.JsonRpcProvider("https://zksync-sepolia.g.alchemy.com/v2/VK1Zi54iD3T464JW7XnIQzORp5GpWePg");
-    factoryAddress = zkSyncFactory;
-    addressTokenMapping = zkSyncTokenMapping;
-  } else if(chainId == 534351){
-      factoryAddress = scrollSepFactory;
-      addressTokenMapping = scrollSepTokenMapping;
-  } else {
-      alert("This network is not supported!")
-      return "Invalid Network"
-  }
-  
   const factoryContract = new Contract(factoryAddress, optionFactoryABI, signer)
   const callOptions = await factoryContract.getCallOptions()
   const putOptions = await factoryContract.getPutOptions()
@@ -133,7 +112,7 @@ export const executeOption = async (walletProvider: any, chainId: any, optionAdd
 
   if(call) {
     const _value = await optionContract.strikeValue();
-    const usdtContract = new Contract(usdtMapping[chainId], erc20ABI, signer);
+    const usdtContract = new Contract(usdtAddress, erc20ABI, signer);
     const _approve = await usdtContract.approve(optionAddr, _value);
     await _approve.wait();
   } else {

@@ -71,12 +71,12 @@ const PositionsPage = () => {
         </div>
       </div>
       <div className="mt-2">
-        {position.positionType === 'Bought' ? (
+        {position.positionType === 'Bought' && activeTab == "active" ? (
           <button className="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded" onClick={() => onExecuteClick(position.contractAddr, position.type === 'CALL')}>
             Execute
           </button>
         ) : "" }
-        {activeTab == 'active' && position.positionType != 'Bought' ? (
+        {activeTab == 'active' && position.positionType != 'Bought' && activeTab == "active" ? (
           <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => onWithdrawClick(position.contractAddr, position.type === 'CALL', position.bought)}>
             Withdraw
           </button>

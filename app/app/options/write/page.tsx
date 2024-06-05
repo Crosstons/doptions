@@ -4,13 +4,9 @@ import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import Link from "next/link";
 import btc from '@/public/Bitcoin_logo.png';
-import lin from '@/public/Chainlink_logo.png';
-import eth from '@/public/Ethereum_logo.png';
 
 const tokens = [
   { id: 1, name: "Bitcoin", image: btc },
-  { id: 3, name: "Ethereum", image: eth },
-  { id: 4, name: "Link", image: lin }
 ];
 
 export default function TokenCards() {

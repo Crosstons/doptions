@@ -55,7 +55,6 @@ const OptionForm: React.FC<Props> = ({ params }) => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     setLoading(true);
     try{
       if (!strikePrice || !premium || !expiration || !quantity) {
@@ -77,7 +76,7 @@ const OptionForm: React.FC<Props> = ({ params }) => {
       };
 
       console.log('Form Data:', formData);
-      await createOptionCall(formData, walletProvider, chainId);
+      await createOptionCall(formData, walletProvider);
     } catch (error) {
       console.log(e)
     } finally {
