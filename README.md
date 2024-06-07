@@ -17,7 +17,7 @@ Traditional financial markets have seen a significant increase in the volume of 
 ## Solution
 dOptions provides a comprehensive solution by enabling users to create and trade options on their own terms, thus ensuring true decentralization and customizability. Our protocol supports the creation and trading of both CALL and PUT Options along with Basket Options, allowing users to define their own strike prices, premiums, expiration dates, and quantities. This flexibility empowers users to tailor options contracts to their specific needs and trading strategies.
 
-Additionally, dOptions plans to introduce advanced options types such as Rainbow Options and Barrier Options, further enhancing the trading experience. Our integration with Chainlink Price Feeds ensures reliable and accurate price data, both on-chain and off-chain. This integration guarantees that all transactions are based on trustworthy and tamper-proof price information.
+Additionally, dOptions plans to introduce advanced options types such as Rainbow Options and Barrier Options, further enhancing the trading experience. Our integration with Chainlink Price Feeds will ensure reliable and accurate price data, both on-chain and off-chain. This integration guarantees that all transactions are based on trustworthy and tamper-proof price information.
 
 To cater to the growing demand for automated trading strategies, dOptions includes support for AI-driven automation clients. These clients enable users to implement and execute automated trading strategies, optimizing their trading activities and maximizing their returns. Our current basic automation client is available for users to try, with more advanced versions planned for future releases.
 
@@ -27,8 +27,8 @@ To cater to the growing demand for automated trading strategies, dOptions includ
 - **Automated Strategies**: Basic AI agent for automated trading strategies.
 - **Cross-Chain Support**: Deployable on multiple EVM and non-EVM chains.
 
-### Chainlink Integration
-- **Price Feeds**: Utilizes Chainlink Price Feeds for accurate and reliable on-chain and off-chain price data.
+### Oracle Integration
+- **Price Feeds**: Utilizes DIA Price Feed for accurate and reliable on-chain and off-chain price data on Linea Sepolia. We will migrate to ChainLink for Linea Mainnet.
 
 ## Team
 We are experienced web3 developers with a history of building DeFi primitives across various chains. Our team, PsyCode Labs, is dedicated to creating next-gen, multi-chain products. Our lead developer holds a certificate in Decentralized Finance from Coursera.
@@ -37,7 +37,7 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 ### July-August
 - Enhance UI/UX
 - Implement Basket Options & Secondary Marketplace frontend
-- Support for EVM chains like Linea, Canto
+- Support for EVM chains like Canto and Base
 
 ### September-October
 - Expand option types
@@ -69,34 +69,9 @@ No installation needed. Ensure `web3.py` is installed if modifications are requi
 3. Build contracts: `forge build`
 4. Run tests: `forge test`
 
-## Target Tracks
-### Financial Services
-Expand the realm of on-chain finance by building new DeFi primitives or solutions that bridge DeFi with TradFi. Utilize Chainlink's offerings to enhance the tokenized asset economy.
-
-### Best MVP of Polygon Cardona
-Develop groundbreaking projects leveraging Cardona zkEVM Testnet technology. Show potential for incubation at Polygon Village and demonstrate market potential, user engagement, and team vision.
-
-### Best DeFi dApp of Polygon Amoy
-Innovate within the DeFi space on the Polygon PoS network. Projects should demonstrate scalability, user experience, and team expertise.
-
-### Chainlink Price Feeds on zkSync
-Deploy projects on zkSync Sepolia Testnet using Chainlink’s Price Feeds. Include thorough documentation and aim to solve tangible problems or build relevant use cases.
-
-### Scroll
-Build the latest in web3 on Ethereum and deploy on Scroll Sepolia. Projects should demonstrate tangible problem-solving, community value, and innovative use of Scroll’s capabilities.
-
 ## Contract Addresses
-### Scroll Sepolia
-- **Factory**: 0x6fA6089c99D07769c30dD0966315ea7C80ECe6FD
-
-### Polygon Amoy (PoS)
-- **Factory**: 0x4633BFBb343F131deF95ac1fd518Ed4495092063
-
-### Polygon Cardona (zkEVM)
-- **Factory**: 0x19Ed533D9f274DC0d1b59FB9C0d5D1C27cba8bb1
-
-### zkSync Sepolia
-- **Factory**: 0x1E89E5ccFcd37e244d02B656085844E399B1967C
+### Linea Sepolia
+- **Factory**: 0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b
 
 ---
 
