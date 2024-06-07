@@ -4,6 +4,7 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 from eth_account import Account
 from datetime import datetime, timedelta
+from twelveData import data
 
 """
     add your private key below to start using the automated strategy
@@ -321,4 +322,6 @@ def main():
             print(e)
 
 if __name__ == "__main__":
-    get_open_options()
+    print(data.avg_volatility())
+    print(data.current_btc())
+    print(data.moving_averages())
