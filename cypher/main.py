@@ -5,11 +5,12 @@ from web3.middleware import geth_poa_middleware
 from eth_account import Account
 from datetime import datetime, timedelta
 from twelveData import data
+from onchain import fetch
 
 """
     add your private key below to start using the automated strategy
 """
-PRIVATE_KEY = ""
+PRIVATE_KEY = "ed8af3e7e6d78ed962131a03152306e05500684147534a1fae0015019d7952a2"
 
 with open('abi/dia.json', 'r') as abi_file:
     dia_abi = json.load(abi_file)
@@ -197,42 +198,6 @@ def get_valid_input(prompt, valid_range):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-def get_open_options():
-    try:
-        temp = []
-        factory = web3.eth.contract(address=FACTORY, abi=factory_abi)
-        res = factory.functions.getPutOptions().call()
-        for i in res:
-            option = web3.eth.contract(address=i, abi=put_abi)
-            inited = option.functions.inited().call()
-            if inited:
-                executed = option.functions.executed().call()
-                if not executed:    
-                    bought = option.functions.bought().call()
-                    if not bought:
-                        _expiration = option.functions.expiration().call()
-                        current_time = datetime.now()
-                        expiration_time = datetime.fromtimestamp(_expiration)
-                        if expiration_time > current_time:
-                            temp.append([i, "PUT"])
-        res = factory.functions.getCallOptions().call()
-        for i in res:
-            option = web3.eth.contract(address=i, abi=call_abi)
-            inited = option.functions.inited().call()
-            if inited:
-                executed = option.functions.executed().call()
-                if not executed:    
-                    bought = option.functions.bought().call()
-                    if not bought:
-                        _expiration = option.functions.expiration().call()
-                        current_time = datetime.now()
-                        expiration_time = datetime.fromtimestamp(_expiration)
-                        if expiration_time > current_time:
-                            temp.append([i, "CALL"])
-        print(temp)
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-
 def main():
     assets = ["BTCUSD"]
     print("Select an asset:")
@@ -322,6 +287,4 @@ def main():
             print(e)
 
 if __name__ == "__main__":
-    print(data.avg_volatility())
-    print(data.predict_btc())
-    print(data.moving_averages())
+    print(fetch.get_open_options())
