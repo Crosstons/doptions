@@ -10,7 +10,7 @@ from onchain import fetch
 """
     add your private key below to start using the automated strategy
 """
-PRIVATE_KEY = "ed8af3e7e6d78ed962131a03152306e05500684147534a1fae0015019d7952a2"
+PRIVATE_KEY = ""
 
 with open('abi/dia.json', 'r') as abi_file:
     dia_abi = json.load(abi_file)
@@ -287,4 +287,4 @@ def main():
             print(e)
 
 if __name__ == "__main__":
-    print(fetch.get_open_options())
+    print(fetch.get_put_options(100,datetime.fromtimestamp(1749404901)))
