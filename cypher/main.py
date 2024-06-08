@@ -323,5 +323,5 @@ def main():
 
 if __name__ == "__main__":
     print(data.avg_volatility())
-    print(data.current_btc())
+    print(data.predict_btc())
     print(data.moving_averages())

@@ -12,25 +12,32 @@ def avg_volatility():
     startDate = (_now - timedelta(days=30)).strftime('%Y-%m-%d')
 
     # API call and converting the received data into json
-    raw = requests.get(f"https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1h&type=none&symbol=BTC/USD&dp=4&start_date={startDate}&end_date={currentDate}")
+    raw = requests.get(f"https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1day&type=none&symbol=BTC/USD&dp=4&start_date={startDate}&end_date={currentDate}")
     raw = raw.json()
 
     # creating a list of difference between highs and lows for each day
     lengths = []
     for i in raw['values']:
-        lengths.append(float(i['high']) - float(i['low']))
+        lengths.append((float(i['high']) - float(i['low'])) / float(i['open']))
 
     # returining the average difference (volatility)
     return np.array(lengths).mean()
 
-def current_btc():
+def predict_btc():
 
     # API call and converting the received data into json
-    raw = requests.get("https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1h&type=none&symbol=BTC/USD&dp=4&outputsize=1&previous_close=true")
-    raw = raw.json()
+    raw = requests.get("https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1day&type=none&symbol=BTC/USD&dp=4&outputsize=1&previous_close=true")
+    raw = raw.json()['values'][0]
 
-    # returining the close price
-    return (float(raw['values'][0]['close']), float(raw['values'][0]['previous_close']))
+    # structure the return object that can be used to predict
+    return_obj = {
+        'Open': [float(raw['open'])],
+        'High': [float(raw['high'])],
+        'Low': [float(raw['low'])],
+        'Close': [float(raw['close'])],
+        'Volatility': [(float(raw['high']) - float(raw['low'])) / float(raw['open'])]
+    }
+    return return_obj
 
 def moving_averages():
 
@@ -40,7 +47,7 @@ def moving_averages():
     startDate = (_now - timedelta(days=30)).strftime('%Y-%m-%d')
 
     # API call and converting the received data into json
-    raw = requests.get(f"https://api.twelvedata.com/ma?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1h&symbol=BTC/USD&dp=4&start_date={startDate}&end_date={currentDate}")
+    raw = requests.get(f"https://api.twelvedata.com/ma?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1day&symbol=BTC/USD&dp=4&start_date={startDate}&end_date={currentDate}")
     raw = raw.json()
 
     # convert json to dataframe and data preparations
