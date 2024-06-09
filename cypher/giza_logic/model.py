@@ -1,14 +1,10 @@
-import datetime
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import yfinance as yf
-from sklearn.metrics import mean_squared_error as mse
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 import xgboost as xgb
-import giza.datasets import DatasetsHub, DatasetsLoader
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from giza.datasets import DatasetsHub, DatasetsLoader
+from twelveData import data
 
 def load_data():
     hub = DatasetsHub()
@@ -105,23 +101,23 @@ def predict_action(model, user_inputs, features, df):
     elif risk_profile == 'high':
         volatility_range = 0.4
 
-    sample_input = pd.DataFrame({
-        'Open': [df['Open'].median()],
-        'High': [df['High'].median()],
-        'Low': [df['Low'].median()],
-        'Close': [df['Close'].median()],
-        'Volatility': [volatility_range],
-        'Avg_Open': [df['Avg_Open'].median()],
-        'Avg_High': [df['Avg_High'].median()],
-        'Avg_Low': [df['Avg_Low'].median()],
-        'Avg_Close': [df['Avg_Close'].median()],
-        'Trend_Open': [df['Trend_Open'].median()],
-        'Trend_High': [df['Trend_High'].median()],
-        'Trend_Low': [df['Trend_Low'].median()],
-        'Trend_Close': [df['Trend_Close'].median()]
+    inp_df = pd.DataFrame({
+        'Open': [df['Open'][-1]],
+        'High': [df['High'][-1]],
+        'Low': [df['Low'][-1]],
+        'Close': [df['Close'][-1]],
+        'Volatility': [df['Volatility'][-1]],
+        'Avg_Open': [df['Avg_Open'][-1]],
+        'Avg_High': [df['Avg_High'][-1]],
+        'Avg_Low': [df['Avg_Low'][-1]],
+        'Avg_Close': [df['Avg_Close'][-1]],
+        'Trend_Open': [df['Trend_Open'][-1]],
+        'Trend_High': [df['Trend_High'][-1]],
+        'Trend_Low': [df['Trend_Low'][-1]],
+        'Trend_Close': [df['Trend_Close'][-1]]
     })
-    sample_input = sample_input[features]
-    probabilities = model.predict_proba(sample_input)
+    inp_df = inp_df[features]
+    probabilities = model.predict_proba(inp_df)
     print(f"Probabilities: {probabilities}")
     action = determine_action(probabilities)
     return action
@@ -141,5 +137,6 @@ if __name__ == "__main__":
     save_model(model)
     
     user_inputs = get_user_inputs()
-    action = predict_action(model, user_inputs, features, df)
+    pred_df = feature_engineering(data.predict_btc())
+    action = predict_action(model, user_inputs, features, pred_df)
     print(f"The model suggests to {action} based on the provided inputs.")

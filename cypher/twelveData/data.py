@@ -24,20 +24,27 @@ def avg_volatility():
     return np.array(lengths).mean()
 
 def predict_btc():
-
     # API call and converting the received data into json
-    raw = requests.get("https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1day&type=none&symbol=BTC/USD&dp=4&outputsize=1&previous_close=true")
-    raw = raw.json()['values'][0]
+    response = requests.get("https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1day&type=none&symbol=BTC/USD&dp=4&outputsize=10&previous_close=true")
+    raw_data = response.json()['values']
 
-    # structure the return object that can be used to predict
-    return_obj = {
-        'Open': [float(raw['open'])],
-        'High': [float(raw['high'])],
-        'Low': [float(raw['low'])],
-        'Close': [float(raw['close'])],
-        'Volatility': [(float(raw['high']) - float(raw['low'])) / float(raw['open'])]
-    }
-    return return_obj
+    # Create a DataFrame from the raw data
+    df = pd.DataFrame(raw_data)
+
+    # Convert columns to appropriate data types
+    df['date'] = pd.to_datetime(df['datetime'])
+    df['Open'] = df['open'].astype(float)
+    df['High'] = df['high'].astype(float)
+    df['Low'] = df['low'].astype(float)
+    df['Close'] = df['close'].astype(float)
+
+    # Calculate Volatility and add it to the DataFrame
+    df['Volatility'] = (df['High'] - df['Low']) / df['Open']
+
+    # Set 'date' as the index
+    df.set_index('date', inplace=True)
+
+    return df
 
 def moving_averages():
 

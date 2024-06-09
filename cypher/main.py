@@ -6,6 +6,7 @@ from eth_account import Account
 from datetime import datetime, timedelta
 from twelveData import data
 from onchain import fetch
+from giza_logic import model
 
 """
     add your private key below to start using the automated strategy
@@ -287,4 +288,4 @@ def main():
             print(e)
 
 if __name__ == "__main__":
-    print(fetch.get_put_options(100,datetime.fromtimestamp(1749404901)))
+    model.test()
