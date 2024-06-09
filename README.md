@@ -52,7 +52,7 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 ## Tech Stack
 - **Foundry**: For smart contract development and testing.
 - **NextJS**: For frontend development.
-- **Python**: For the automation client using web3.py.
+- **Giza**: For the AI Agent utilizing zkML.
 
 ## Installation Guide
 ### app (Next.js Project)
@@ -60,8 +60,10 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 2. Install dependencies: `npm install`
 3. Run the development server: `npm run dev`
 
-### automation (Python Client)
-No installation needed. Ensure `web3.py` is installed if modifications are required.
+### cypher (Giza Agent)
+1. Navigate to the `cypher` directory.
+2. Install dependencies using `pip` listed in the `requirements.txt` file
+3. Further steps in the README file inside the folder
 
 ### contracts (Foundry Project)
 1. Navigate to the `contracts` directory.
