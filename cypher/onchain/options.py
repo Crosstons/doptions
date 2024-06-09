@@ -4,10 +4,10 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-network_url = os.environ.get("INFURA_URL")
+network_url = os.environ.get("PUBLIC_RPC")
 networks.parse_network_choice(network_url).__enter__()
 
-def buy_option(option_type, option_addr):
+def buy_option(option_type: str, option_addr: str):
     try:
         opt_contract = Contract(option_addr, abi="abi/callOption.json" if option_type == "CALL" else "abi/putOption.json")
         tx = opt_contract.buy()

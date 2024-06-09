@@ -2,4 +2,6 @@
 /onchain/__pycache__
 /twelveData/__pycache__
 /giza_logic/__pycache__
-/giza/model.json
+/giza_logic/model.json
+/doptions_agent
+/tmp

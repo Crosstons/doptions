@@ -4,6 +4,8 @@ import xgboost as xgb
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from giza.datasets import DatasetsHub, DatasetsLoader
+from giza.zkcook import serialize_model
+from giza.agents import AgentResult, GizaAgent
 from twelveData import data
 
 def load_data():
@@ -73,8 +75,8 @@ def evaluate_model_cv(model, X, y):
     print(f"Cross-validation scores: {cv_scores}")
     print(f"Mean cross-validation score: {np.mean(cv_scores)}")
 
-def save_model(model, filename='model.json'):
-    model.save_model(filename)
+def save_model(model, filename='giza_logic/model.json'):
+    serialize_model(model, filename)
     print(f"Model saved as '{filename}'.")
 
 def get_user_inputs():
@@ -91,6 +93,26 @@ def determine_action(probabilities, buy_threshold=0.6, sell_threshold=0.6):
         return 'sell'
     else:
         return 'watch'
+
+def prediction_df(df):
+    features = ['Open', 'High', 'Low', 'Close', 'Volatility', 'Avg_Open', 'Avg_High', 'Avg_Low', 'Avg_Close', 'Trend_Open', 'Trend_High', 'Trend_Low', 'Trend_Close']
+    inp_df = pd.DataFrame({
+        'Open': [df['Open'][-1]],
+        'High': [df['High'][-1]],
+        'Low': [df['Low'][-1]],
+        'Close': [df['Close'][-1]],
+        'Volatility': [df['Volatility'][-1]],
+        'Avg_Open': [df['Avg_Open'][-1]],
+        'Avg_High': [df['Avg_High'][-1]],
+        'Avg_Low': [df['Avg_Low'][-1]],
+        'Avg_Close': [df['Avg_Close'][-1]],
+        'Trend_Open': [df['Trend_Open'][-1]],
+        'Trend_High': [df['Trend_High'][-1]],
+        'Trend_Low': [df['Trend_Low'][-1]],
+        'Trend_Close': [df['Trend_Close'][-1]]
+    })
+    inp_df = inp_df[features]
+    return inp_df.to_numpy()
 
 def predict_action(model, user_inputs, features, df):
     amount_to_invest, risk_profile, duration_of_investment = user_inputs
@@ -122,7 +144,7 @@ def predict_action(model, user_inputs, features, df):
     action = determine_action(probabilities)
     return action
 
-if __name__ == "__main__":
+def test():
     df = load_data()
     df = feature_engineering(df)
     X_train, X_test, y_train, y_test, features = split_data(df)

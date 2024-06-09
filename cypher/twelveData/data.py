@@ -87,3 +87,8 @@ def round_up_to_next_hour(dt):
     else:
         dt = dt.replace(second=0, microsecond=0)
     return dt
+
+def get_curr_btc():
+    response = requests.get("https://api.twelvedata.com/time_series?apikey=f81ecba5955846bc8d7d9bc2589a05ff&interval=1min&type=none&symbol=BTC/USD&dp=8&outputsize=1&previous_close=true")
+    raw_data = response.json()['values'][0]
+    return raw_data["close"]
