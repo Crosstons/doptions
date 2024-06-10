@@ -28,6 +28,21 @@ def avg_volatility():
     # returining the average difference (volatility)
     return np.array(lengths).mean()
 
+def train_btc():
+    response = requests.get(f"https://api.twelvedata.com/time_series?apikey={API_KEY}&interval=1day&symbol=BTC/USD&outputsize=365")
+    raw_data = response.json()['values']
+
+    df = pd.DataFrame(raw_data)
+    df['date'] = pd.to_datetime(df['datetime'])
+    df['Open'] = df['open'].astype(float)
+    df['High'] = df['high'].astype(float)
+    df['Low'] = df['low'].astype(float)
+    df['Close'] = df['close'].astype(float)
+    df['Volatility'] = (df['High'] - df['Low']) / df['Open']
+    df.set_index('date', inplace=True)
+
+    return  df
+
 def predict_btc():
     # API call and converting the received data into json
     response = requests.get(f"https://api.twelvedata.com/time_series?apikey={API_KEY}&interval=1day&type=none&symbol=BTC/USD&dp=4&outputsize=10&previous_close=true")

@@ -1,4 +1,5 @@
 import os
+import joblib as jb
 from dotenv import load_dotenv, find_dotenv
 from onchain.addresses import USDT
 from giza_logic.model import get_user_inputs, prediction_df, test
@@ -10,6 +11,9 @@ from onchain import fetch, helpers, options
 load_dotenv(find_dotenv())
 network_url = os.environ.get("PUBLIC_RPC")
 
+# transformer = jb.load('giza_logic/transformer.pkl')
+# scaler = jb.load('giza_logic/scaler.pkl')
+
 def days_to_unix_timestamp(days_from_now: int) -> int:
     future_time = datetime.now() + timedelta(days=days_from_now)
     return int(future_time.timestamp())
@@ -18,6 +22,7 @@ def buy_option_agent(agent_id: int, amt: float, duration: int, account="doptions
     print("fetching data")
     fetched_df = data.predict_btc()
     processed_df = prediction_df(fetched_df)
+    print(processed_df)
     contracts = {
         "usdt": USDT
     }
