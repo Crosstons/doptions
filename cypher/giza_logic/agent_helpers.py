@@ -11,7 +11,7 @@ def create_agent(agent_id: int, chain: str, contracts: dict, account: str):
     return agent
 
 def predict(agent: GizaAgent, X: np.ndarray):
-    prediction = agent.predict(input_feed={"val": X}, verifiable=True, model_category="XGB", dry_run=True, job_size="M")
+    prediction = agent.predict(input_feed={"val": X}, verifiable=True, model_category="XGB", job_size="M")
     return prediction
 
 def get_pred_val(prediction: AgentResult):

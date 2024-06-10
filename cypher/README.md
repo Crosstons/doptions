@@ -1,10 +1,8 @@
 # Cypher
 #### AI-Driven Options Trading Agent on Decentralized Protocols
 
-- [Documentation](#)
-- [Video Demo](#)
-- [Pitch Deck](#)
-- [Website](#)
+- [Video Demo](https://youtu.be/ZQf8cjNT3h0?si=6WNDQa5Ld4NJLhTd)
+- [Pitch Deck](https://gamma.app/docs/Agent-Cypher--us39azt1iezgykt)
 
 ## Table of Contents
 
@@ -26,18 +24,17 @@ Cypher is an AI-driven options trading agent designed to automate and optimize t
 
 1. User Inputs: Amount to be invested, risk tolerance (low, medium, high), and duration of investment.
 2. Data Fetching: Real-time market data collection.
-3. Feature Engineering: Data processing and enhancement for model input.
-4. Model Prediction: XGBoost ML model for market movement predictions.
-5. Threshold Check: Determine action (buy, watch, sell) based on prediction thresholds.
-6. Volatility Check: Compare current and historical volatility to match user’s risk profile.
-7. Option Selection: Fetch and filter call/put options, calculate potential profits, and select the best option.
-8. Execution: Execute trades based on the highest profit potential.
+3. Model Prediction: XGBoost ML model for market movement predictions.
+4. Threshold Check: Determine action buy (call, put) option based on prediction thresholds.
+5. Volatility Check: Compare current and historical volatility to match user’s risk profile.
+6. Option Selection: Fetch and filter call/put options, calculate potential profits, and select the best option.
+7. Execution: Execute trades based on the highest profit potential.
 
 ## Tech Stack
 
 Leveraging below technologies:
 
-1. Giza - For zero knowledge machine learning.
+1. Giza - For zero knowledge machine learning and agents-sdk.
 2. XGBoost - Machine learning model for predictions.
 3. APIs - For fetching real-time market data.
 4. Pandas - Data manipulation and feature engineering.
@@ -47,17 +44,15 @@ Leveraging below technologies:
 
 1. Fetch Data from API
    - Real-time collection of market data.
-2. Feature Engineering
-   - Calculate moving averages, price trends, and volatility measures.
-3. Model Prediction
+2. Model Prediction
    - Predict market movements using XGBoost.
-4. Threshold Check
+3. Threshold Check
    - Evaluate prediction probabilities and determine action.
-5. Volatility Check
+4. Volatility Check
    - Compare current volatility with 30-day average.
-6. Option Selection
+5. Option Selection
    - Fetch and filter options based on premium and expiration.
-7. Execution
+6. Execution
    - Execute the trade with the highest profit potential.
 
 ## Future Improvements
