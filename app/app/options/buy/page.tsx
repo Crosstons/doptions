@@ -44,7 +44,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-row h-screen bg-black bg-dot-white/[0.2] text-white pt-32">
+    <div className="flex flex-row h-full bg-black bg-dot-white/[0.2] text-white pt-32">
       {loading && <LoadingScreen />}  {/* Conditionally render the loading screen */}
       {!loading && (
         <>
