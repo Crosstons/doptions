@@ -5,7 +5,7 @@
 - **[Video Demo](https://youtu.be/OV_RVZxUJ38)**
 - **[Automation Demo](https://youtu.be/AZyX4mt8d8c)**
 - **[Code Walkthrough](https://youtu.be/anJyjkQ6W0g)**
-- **[Live Website](https://doptions.vercel.app/)**
+- **[Live Website](https://doptions-plum.vercel.app/)**
 - **[Pitchdeck](https://doptions-uokcwbj.gamma.site/)**
 
 ## Overview
