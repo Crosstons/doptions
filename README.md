@@ -28,7 +28,7 @@ To cater to the growing demand for automated trading strategies, dOptions includ
 - **Cross-Chain Support**: Deployable on multiple EVM and non-EVM chains.
 
 ### Oracle Integration
-- **Price Feeds**: Utilizes DIA Price Feed for accurate and reliable on-chain and off-chain price data on Linea Sepolia. We will migrate to ChainLink for Linea Mainnet.
+- **Price Feeds**: Utilizes ChainLink Price Feed for accurate and reliable on-chain and off-chain price data on Linea Sepolia.
 
 ## Team
 We are experienced web3 developers with a history of building DeFi primitives across various chains. Our team, PsyCode Labs, is dedicated to creating next-gen, multi-chain products. Our lead developer holds a certificate in Decentralized Finance from Coursera.
@@ -37,7 +37,7 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 ### July-August
 - Enhance UI/UX
 - Implement Basket Options & Secondary Marketplace frontend
-- Support for EVM chains like Canto and Base
+- Support for EVM chains like Canto
 
 ### September-October
 - Expand option types
@@ -72,8 +72,8 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 4. Run tests: `forge test`
 
 ## Contract Addresses
-### Linea Sepolia
-- **Factory**: 0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b
+### Base Sepolia
+- **Factory**: 
 
 ---
 
