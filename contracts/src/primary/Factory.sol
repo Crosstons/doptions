@@ -9,8 +9,7 @@ contract OptionsFactory is Ownable {
     address[] public callOptions;
     address[] public putOptions;
     address public premiumToken;
-    address public priceOracle;
-    mapping(address => string) assetStrings;
+    mapping(address => address) public priceOracles;
 
     event CallOptionCreated(
         address indexed optionAddress,
@@ -30,17 +29,12 @@ contract OptionsFactory is Ownable {
         uint256 expiration
     );
 
-    constructor(address _premiumToken, address _priceOracle) Ownable(msg.sender) {
+    constructor(address _premiumToken) Ownable(msg.sender) {
         premiumToken = _premiumToken;
-        priceOracle = _priceOracle;
     }
 
-    function setPairId(address _asset, string memory assetString) external onlyOwner {
-        assetStrings[_asset] = assetString;
-    }
-
-    function setPriceOracle(address _priceOracle) external onlyOwner {
-        priceOracle = _priceOracle;
+    function setPriceOracle(address _asset, address _priceOracle) external onlyOwner {
+        priceOracles[_asset] = _priceOracle;
     }
 
     function createCallOption(
@@ -50,12 +44,11 @@ contract OptionsFactory is Ownable {
         uint256 _quantity,
         uint256 _expiration
     ) external {
-        
-        require((keccak256(abi.encodePacked(assetStrings[_asset]))) != (keccak256(abi.encodePacked(""))), "Oracle not set for this token");
-        string memory _assetString = assetStrings[_asset];
+        address priceOracle = priceOracles[_asset];
+        require(priceOracle != address(0), "Price oracle not set for this asset");
 
         CallOption _newCallOption = new CallOption(
-            _asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle, _assetString
+            _asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle
         );
         callOptions.push(address(_newCallOption));
 
@@ -69,12 +62,11 @@ contract OptionsFactory is Ownable {
         uint256 _quantity,
         uint256 _expiration
     ) external {
-
-        require((keccak256(abi.encodePacked(assetStrings[_asset]))) != (keccak256(abi.encodePacked(""))), "Oracle not set for this token");
-        string memory _assetString = assetStrings[_asset];
+        address priceOracle = priceOracles[_asset];
+        require(priceOracle != address(0), "Price oracle not set for this asset");
 
         PutOption _newPutOption =
-            new PutOption(_asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle, _assetString);
+            new PutOption(_asset, msg.sender, _premium, _strikePrice, _quantity, _expiration, premiumToken, priceOracle);
         putOptions.push(address(_newPutOption));
 
         emit PutOptionCreated(address(_newPutOption), _asset, _premium, _strikePrice, _quantity, _expiration);
