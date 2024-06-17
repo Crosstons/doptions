@@ -6,7 +6,7 @@ import "../src/primary/Factory.sol";
 import "../src/primary/Call.sol";
 import "../src/primary/Put.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../src/primary/Dia.sol";
+import "../src/primary/AggregatorV3Interface.sol";
 
 contract OptionsFactoryTest is Test {
     OptionsFactory public factory;
@@ -18,8 +18,7 @@ contract OptionsFactoryTest is Test {
     address buyer = makeAddr("buyer");
 
     function setUp() public {
-        factory = new OptionsFactory(usdcToken, priceOracle);
-        factory.setPairId(btcToken, "BTC/USD");
+        factory = new OptionsFactory(usdcToken);
     }
 
     function testCreateCallOption() public {
