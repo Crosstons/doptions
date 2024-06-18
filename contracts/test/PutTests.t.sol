@@ -6,7 +6,7 @@ import "../src/primary/Factory.sol";
 import "../src/primary/Call.sol";
 import "../src/primary/Put.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../src/primary/Dia.sol";
+import "../src/primary/AggregatorV3Interface.sol";
 
 contract PutOptionTest is Test {
     OptionsFactory public factory;
@@ -19,8 +19,7 @@ contract PutOptionTest is Test {
     address buyer = makeAddr("buyer");
 
     function setUp() public {
-        factory = new OptionsFactory(daiToken, priceOracle);
-        factory.setPairId(btcToken, "BTC/USD");
+        factory = new OptionsFactory(daiToken);
         uint256 premium = 100e18;
         uint256 strikePrice = 80000e8;
         uint256 quantity = 1e15;

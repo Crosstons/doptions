@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IDIAOracleV2} from "./Dia.sol";
+import {AggregatorV3Interface} from "./AggregatorV3Interface.sol";
 
 contract PutOption {
     address public asset;
@@ -16,8 +16,7 @@ contract PutOption {
     bool public bought;
     bool public executed;
     IERC20 public premiumToken;
-    string public assetString;
-    IDIAOracleV2 public oracle;
+    AggregatorV3Interface public priceOracle;
 
     constructor(
         address _asset,
@@ -27,8 +26,7 @@ contract PutOption {
         uint256 _quantity,
         uint256 _expiration,
         address _premiumToken,
-        address _priceOracle,
-        string memory _assetString
+        address _priceOracle
     ) {
         asset = _asset;
         creator = _creator;
@@ -41,8 +39,7 @@ contract PutOption {
         executed = false;
         inited = false;
         premiumToken = IERC20(_premiumToken);
-        oracle = IDIAOracleV2(_priceOracle);
-        assetString = _assetString;
+        priceOracle = AggregatorV3Interface(_priceOracle);
     }
 
     modifier isInited() {
@@ -93,16 +90,18 @@ contract PutOption {
     }
 
     function execute() external onlyBuyer notExecuted isInited notExpired {
-        (uint128 latestPrice,) = oracle.getValue(assetString);
-        uint256 _price = uint256(latestPrice);
-
-        require(_price <= strikePrice, "Option is out of the money");
+        require(_checkPosition(), "Option is out of the money");
 
         uint256 amountToTransfer = strikeValue();
         require(premiumToken.transfer(buyer, amountToTransfer), "Asset transfer failed");
         require(IERC20(asset).transferFrom(buyer, creator, quantity), "Payment failed");
 
         executed = true;
+    }
+
+    function _checkPosition() internal view returns (bool) {
+        (, int256 price,,,) = priceOracle.latestRoundData();
+        return uint256(price) <= strikePrice;
     }
 
     function cancel() external onlyCreator notBought isInited notExpired {
@@ -123,6 +122,6 @@ contract PutOption {
     }
 
     function strikeValue() public view returns (uint256) {
-        return (strikePrice * quantity) / (10 ** 8);
+        return (strikePrice * quantity) / (10 ** priceOracle.decimals());
     }
 }

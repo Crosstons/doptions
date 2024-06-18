@@ -21,11 +21,17 @@ contract TokenScript is Script {
         address account = vm.addr(privateKey);
 
         vm.startBroadcast(privateKey);
-        Token token = new Token("Linea USDT", "lUSDT");
+        Token token = new Token("Base USDT", "bUSDT");
         token.mint(account, 100e18);
 
-        Token token2 = new Token("Linea BTC", "lBTC");
+        Token token2 = new Token("Base BTC", "bBTC");
         token2.mint(account, 10e18);
+
+        Token token3 = new Token("Base WETH", "bWETH");
+        token3.mint(account, 10e18);
+
+        Token token4 = new Token("Base LINK", "bLINK");
+        token4.mint(account, 10e18);
 
         vm.stopBroadcast();
     }
