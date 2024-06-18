@@ -2,8 +2,10 @@ import { BrowserProvider, Contract, parseEther } from 'ethers';
 import { erc20ABI } from '@/web3/ERC20ABI';
 
 const tokenArray = [
-    '0x7A9294c8305F9ee1d245E0f0848E00B1149818C7',
-    '0x817BB339d55A0a66EA680EE849a931416b575Ff2',
+    '0x10Cbc80974281fE66f41C26cA69490820432FaA2',
+    '0x01aa350e8A61EF1134773B2c69AcCFD0Eceb6a4F',
+    '0xDd5E5A90B2FB4312439Df8ae213FD99D5f1796D9',
+    '0x214757038fdB549B1E46774d006CFba35667Ff1E'
 ]
 
 export const getTokens = async (address : any, walletProvider: any) => {

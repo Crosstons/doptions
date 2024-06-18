@@ -5,11 +5,12 @@ import { putOptionABI } from '@/web3/PutOptionABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
 
 export const factoryAddress = "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b";
-export const usdtAddress = "0x7A9294c8305F9ee1d245E0f0848E00B1149818C7";
-const btcAddress = "0x817BB339d55A0a66EA680EE849a931416b575Ff2";
+export const usdtAddress = "0x10Cbc80974281fE66f41C26cA69490820432FaA2";
 
 export const addressTokenMapping : { [key : string] : string } = {
-    "0x817BB339d55A0a66EA680EE849a931416b575Ff2" : "BTC",
+    "0x01aa350e8A61EF1134773B2c69AcCFD0Eceb6a4F" : "BTC",
+    "0xDd5E5A90B2FB4312439Df8ae213FD99D5f1796D9" : "ETH",
+    "0x214757038fdB549B1E46774d006CFba35667Ff1E" : "LINK"
 }
 
 export interface OptionData {
