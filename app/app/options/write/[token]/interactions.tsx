@@ -6,7 +6,9 @@ import { callOptionABI } from '@/web3/CallOptionABI';
 import { usdtAddress, factoryAddress } from '../../buy/interactions';
 
 const addressTokenMapping : { [key : string] : string } = {
-    "bitcoin": "0x817BB339d55A0a66EA680EE849a931416b575Ff2"
+    "bitcoin" : "0x01aa350e8A61EF1134773B2c69AcCFD0Eceb6a4F",
+    "ethereum" : "0xDd5E5A90B2FB4312439Df8ae213FD99D5f1796D9",
+    "link" : "0x214757038fdB549B1E46774d006CFba35667Ff1E",
 }
 
 export const createOptionCall = async (formData : any, walletProvider : any) => {
