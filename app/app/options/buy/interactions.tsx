@@ -4,7 +4,7 @@ import { callOptionABI } from '@/web3/CallOptionABI';
 import { putOptionABI } from '@/web3/PutOptionABI';
 import { erc20ABI } from '@/web3/ERC20ABI';
 
-export const factoryAddress = "0x5934C2Ca4c4F7b22526f6ABfD63bB8075a62e65b";
+export const factoryAddress = "0x76AE18129E3f152b250507e9714516123F9A7cCf";
 export const usdtAddress = "0x10Cbc80974281fE66f41C26cA69490820432FaA2";
 
 export const addressTokenMapping : { [key : string] : string } = {
