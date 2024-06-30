@@ -2,11 +2,10 @@
 
 *Your Gateway to Truly Decentralized Options Trading*
 
-- **[Video Demo](https://youtu.be/OV_RVZxUJ38)**
-- **[Automation Demo](https://youtu.be/AZyX4mt8d8c)**
+- **[Video Demo](https://youtu.be/pI34tALAlQc)**
+- **[Automation Demo](https://youtu.be/ZQf8cjNT3h0?si=L0VRkDF3AKKfmeSl)**
 - **[Code Walkthrough](https://youtu.be/anJyjkQ6W0g)**
-- **[Live Website](https://doptions-plum.vercel.app/)**
-- **[Pitchdeck](https://doptions-uokcwbj.gamma.site/)**
+- **[Live Website](https://doptions-gules.vercel.app/)**
 
 ## Overview
 dOptions is a decentralized options protocol allowing users to create and trade options contracts with full customizability. It supports both CALL and PUT Options, offering unique features like Basket Options.
@@ -73,7 +72,7 @@ We are experienced web3 developers with a history of building DeFi primitives ac
 
 ## Contract Addresses
 ### Base Sepolia
-- **Factory**: 
+- **Factory**: 0x76AE18129E3f152b250507e9714516123F9A7cCf
 
 ---
 
